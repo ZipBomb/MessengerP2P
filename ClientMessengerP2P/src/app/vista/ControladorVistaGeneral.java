@@ -54,7 +54,6 @@ public class ControladorVistaGeneral {
     @FXML private TableColumn<Dato, String> columnaPaso;
     @FXML private TableColumn<Dato, Float> columnaDato;
     @FXML private TextField campoTiempo;
-    @FXML private Button botonSuscribirse;
     @FXML private Label etiquetaTiempoRestante;
     
     @FXML 
