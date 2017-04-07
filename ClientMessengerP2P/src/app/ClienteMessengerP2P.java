@@ -41,7 +41,7 @@ public class ClienteMessengerP2P extends Application {
         Scene escena = new Scene(elementoRaiz);    
         
         stage.setScene(escena);
-        stage.setTitle("ClienteRR");
+        stage.setTitle("MessengerP2P");
         stage.show();
     }
 
