@@ -1,0 +1,7 @@
+// echo_example.idl
+module ClienteP2P {
+	interface IServidorCliente {
+		        oneway void prueba(in string str);
+		        oneway void shutdown();
+	};
+};
