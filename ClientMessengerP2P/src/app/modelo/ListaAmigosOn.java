@@ -14,31 +14,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package app.vista;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.TableView;
+package app.modelo;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
- * FXML Controller class
  *
  * @author Pablo Rey <pablo.rey.fernandez@rai.usc.es>
  * @version 1.0
- * @since 2017-04
+ * @since 2017-03
  */
-
-public class ControladorVistaGeneral {
+public class ListaAmigosOn {
     
-    @FXML private TableView<String> listaAmigosOn;    
-    @FXML private TableView<String> listaAmigosOff;       
+    private final ObservableList<Amigo> listaAmigos;
+    private static final ListaAmigosOn INSTANCIA = new ListaAmigosOn();
     
-    @FXML
-    private void initialize() {
-    
+    private ListaAmigosOn() {
+        this.listaAmigos = FXCollections.observableArrayList();
     }
     
-    @FXML
-    private void remove() {
+    public static ListaAmigosOn getInstancia() {
+        return INSTANCIA;
+    }
+    
+    public ObservableList<Amigo> getListaAmigos() {
+        return listaAmigos;
+    }
+
+    public void anhadirAmigo() {
+
+    }
+    
+    public void eliminarAmigo() {
     
     }
     

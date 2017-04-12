@@ -30,14 +30,14 @@ import javafx.stage.Stage;
  * @since 2017-03
  */
 public class ClienteMessengerP2P extends Application {
-
+    
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(this.getClass().getClassLoader()
                 .getResource("app/vista/VistaGeneral.fxml"));
         
-        Parent elementoRaiz = loader.load();
+        Parent elementoRaiz = loader.load();        
         Scene escena = new Scene(elementoRaiz);    
         
         stage.setScene(escena);
@@ -46,6 +46,11 @@ public class ClienteMessengerP2P extends Application {
     }
 
     public static void main(String[] args) {
+        // Lanzamiento del hilo de escucha
+        HiloEscucha hiloEscucha = new HiloEscucha(args);
+        //hiloEscucha.start();
+        
+        // Lanzamiento de la aplicación JavaFX
         launch(args);
     }
         

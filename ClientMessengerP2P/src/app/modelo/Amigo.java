@@ -16,8 +16,6 @@
  */
 package app.modelo;
 
-import javafx.beans.property.FloatProperty;
-import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -25,21 +23,33 @@ import javafx.beans.property.StringProperty;
  *
  * @author Pablo Rey <pablo.rey.fernandez@rai.usc.es>
  */
-public class Dato {
-    private final StringProperty paso;
-    private final FloatProperty dato;
-    
-    public Dato(String paso, Float dato) {
-        this.paso = new SimpleStringProperty(paso);
-        this.dato = new SimpleFloatProperty(dato);
+public class Amigo {
+    private final StringProperty nick;
+    private final boolean conectado;    
+    private final String ip;
+    private final String puerto;
+
+    public Amigo(String nick, boolean conectado, String ip, String puerto) {
+        this.nick = new SimpleStringProperty(nick);
+        this.conectado = conectado;
+        this.ip = ip;
+        this.puerto = puerto;
     }
 
-    public StringProperty getPaso() {
-        return paso;
+    public StringProperty getNick() {
+        return nick;
     }
 
-    public FloatProperty getDato() {
-        return dato;
+    public boolean isConectado() {
+        return conectado;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public String getPuerto() {
+        return puerto;
     }
  
 }
