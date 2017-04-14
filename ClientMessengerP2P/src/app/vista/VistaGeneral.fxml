@@ -14,12 +14,14 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="482.0" prefWidth="347.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.vista.ControladorVistaGeneral">
    <top>
-      <MenuBar fx:id="menu" onDragDone="#remove" BorderPane.alignment="CENTER">
+      <MenuBar fx:id="menu" BorderPane.alignment="CENTER">
         <menus>
-          <Menu mnemonicParsing="false" text="Archivo">
+          <Menu mnemonicParsing="false" text="Opciones">
             <items>
-              <MenuItem mnemonicParsing="false" text="Ver solicitudes pendientes" />
-                  <MenuItem mnemonicParsing="false" text="Cerrar sesion" />
+              <MenuItem mnemonicParsing="false" onAction="#verSolicitudesPendientes" text="Ver solicitudes pendientes" />
+                  <MenuItem mnemonicParsing="false" onAction="#anhadirAmistad" text="Añadir amistad" />
+                  <MenuItem mnemonicParsing="false" onAction="#eliminarAmistad" text="Eliminar amistad" />
+                  <MenuItem mnemonicParsing="false" onAction="#cerrarSesion" text="Cerrar sesión" />
             </items>
           </Menu>
         </menus>
@@ -28,12 +30,12 @@
    <bottom>
       <ToolBar prefHeight="36.0" prefWidth="399.0" BorderPane.alignment="CENTER">
         <items>
-            <TextField prefHeight="26.0" prefWidth="273.0">
+            <TextField fx:id="campoBusqueda" prefHeight="26.0" prefWidth="273.0">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </TextField>
-          <Button mnemonicParsing="false" text="Buscar">
+          <Button mnemonicParsing="false" onAction="#buscarUsuario" text="Buscar">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
@@ -46,7 +48,7 @@
          <children>
             <TableView fx:id="listaAmigosOn" prefHeight="228.0" prefWidth="347.0">
               <columns>
-                <TableColumn prefWidth="75.0" text="Amigos conectados" />
+                <TableColumn fx:id="columnaOn" prefWidth="75.0" text="Amigos conectados" />
               </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -54,7 +56,7 @@
             </TableView>
             <TableView fx:id="listaAmigosOff" prefHeight="214.0" prefWidth="347.0">
               <columns>
-                <TableColumn prefWidth="75.0" text="Amigos desconectados" />
+                <TableColumn fx:id="columnaOff" prefWidth="75.0" text="Amigos desconectados" />
               </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

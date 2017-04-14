@@ -9,6 +9,6 @@ package app.modelo;
  *
  * @author Pablo Rey <pablo.rey.fernandez@rai.usc.es>
  */
-public class ListaSolicitudes {
+public class ListaResultadoBusqueda {
     
 }

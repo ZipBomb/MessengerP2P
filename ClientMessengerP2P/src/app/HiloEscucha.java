@@ -1,11 +1,25 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2017 Pablo Rey <pablo.rey.fernandez@rai.usc.es>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package app;
 
 import ClienteP2P.*;
+import app.modelo.Amigo;
+import app.modelo.ListaAmigosOff;
+import app.modelo.ListaAmigosOn;
 import org.omg.CORBA.ORB;
 import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContextExt;
@@ -32,17 +46,39 @@ class IServidorClienteImpl extends IServidorClientePOA {
 
     @Override
     public void notificarConexion(Usuario usuario) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Amigo amigo = new Amigo(usuario.nick, usuario.conectado, usuario.ip, usuario.puerto);
+        try {
+            ListaAmigosOff.getInstancia().eliminarAmigo(amigo);
+            ListaAmigosOn.getInstancia().anhadirAmigo(amigo);
+        } catch(Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
     }
 
     @Override
     public void notificarDesconexion(Usuario usuario) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Amigo amigo = new Amigo(usuario.nick, usuario.conectado, usuario.ip, usuario.puerto);
+        try {
+            ListaAmigosOn.getInstancia().eliminarAmigo(amigo);
+            ListaAmigosOff.getInstancia().anhadirAmigo(amigo);
+        } catch(Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
     }
 
     @Override
     public void notificarNuevaAmistad(Usuario usuario) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Amigo amigo = new Amigo(usuario.nick, usuario.conectado, usuario.ip, usuario.puerto);
+        try {
+            if(amigo.estaConectado()) {
+                ListaAmigosOn.getInstancia().anhadirAmigo(amigo);
+            }
+            else {
+                ListaAmigosOff.getInstancia().anhadirAmigo(amigo);
+            }
+        } catch(Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());            
+        }
     }
 }
 

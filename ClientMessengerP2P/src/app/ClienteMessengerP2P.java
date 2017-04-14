@@ -16,6 +16,8 @@
  */
 package app;
 
+import app.vista.ControladorVistaLogin;
+import app.vista.VistaUtils;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.fxml.FXMLLoader;
@@ -33,24 +35,18 @@ public class ClienteMessengerP2P extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(this.getClass().getClassLoader()
-                .getResource("app/vista/VistaGeneral.fxml"));
-        
+        FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaLogin.fxml");
         Parent elementoRaiz = loader.load();        
-        Scene escena = new Scene(elementoRaiz);    
+        ControladorVistaLogin controlador = loader.getController();
+        controlador.setHostServices(this.getHostServices());
         
+        Scene escena = new Scene(elementoRaiz);
         stage.setScene(escena);
         stage.setTitle("MessengerP2P");
         stage.show();
     }
 
     public static void main(String[] args) {
-        // Lanzamiento del hilo de escucha
-        HiloEscucha hiloEscucha = new HiloEscucha(args);
-        //hiloEscucha.start();
-        
-        // Lanzamiento de la aplicación JavaFX
         launch(args);
     }
         

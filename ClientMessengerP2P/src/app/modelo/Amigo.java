@@ -40,7 +40,7 @@ public class Amigo {
         return nick;
     }
 
-    public boolean isConectado() {
+    public boolean estaConectado() {
         return conectado;
     }
 
