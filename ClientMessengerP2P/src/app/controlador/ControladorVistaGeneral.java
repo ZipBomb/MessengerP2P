@@ -14,20 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package app.vista;
+package app.controlador;
 
 import app.modelo.Amigo;
 import app.modelo.ListaAmigosOff;
 import app.modelo.ListaAmigosOn;
+import app.vista.VistaUtils;
 import java.io.IOException;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -40,6 +43,8 @@ import javafx.stage.Stage;
  */
 public class ControladorVistaGeneral {
     
+    private int numeroClicks;
+    
     @FXML private TableView<Amigo> listaAmigosOn;    
     @FXML private TableColumn<Amigo, String> columnaOn;
     @FXML private TableView<Amigo> listaAmigosOff;   
@@ -47,29 +52,60 @@ public class ControladorVistaGeneral {
     @FXML private TextField campoBusqueda;
         
     @FXML
-    private void initialize() {  
+    private void initialize() {
+        this.numeroClicks = 0;
         this.listaAmigosOn.setItems(ListaAmigosOn.getInstancia().getListaAmigosOn());
         this.columnaOn.setCellValueFactory(amigo -> amigo.getValue().getNick());
         this.listaAmigosOff.setItems(ListaAmigosOff.getInstancia().getListaAmigosOff());
-        this.columnaOff.setCellValueFactory(amigo -> amigo.getValue().getNick());        
-    }
-
-    @FXML
-    private void buscarUsuario() {
-        this.campoBusqueda.setText("");
-//        TODO: Añadir llamadas a servidor y presentar resultados
+        this.columnaOff.setCellValueFactory(amigo -> amigo.getValue().getNick());  
+        this.listaAmigosOn.setPlaceholder(new Label("No tienes ningún amigo conectado."));
+        this.listaAmigosOff.setPlaceholder(new Label("No tienes ningún amigo desconectado."));        
     }
     
     @FXML
-    private void verSolicitudesPendientes() {
-//        TODO: Presentar ventana modal con resultados   
+    private void iniciarConversacion(MouseEvent event) {
+        if(event.getClickCount() == 2) {
+            this.listaAmigosOn.getSelectionModel().getSelectedItem();
+        }
+    }
+
+    @FXML
+    private void buscarUsuario() throws IOException {
+        this.campoBusqueda.setText("");
+        FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaResultadosBusqueda.fxml");
+        Parent vista = loader.load();
+        ControladorVistaResultadosBusqueda controlador = loader.getController();
+        
+        //Peticion servidor
+        
+        Stage dialogo = new Stage();
+        dialogo.initModality(Modality.WINDOW_MODAL);
+        dialogo.initOwner(this.listaAmigosOn.getScene().getWindow());
+        dialogo.setScene(new Scene(vista));
+        dialogo.setTitle("Usuarios encontrados");
+        dialogo.showAndWait();         
+//      TODO: Añadir llamadas a servidor
+    }
+    
+    @FXML
+    private void verSolicitudesPendientes() throws IOException {
+        FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaSolicitudes.fxml");
+        Parent vista = loader.load();
+        ControladorVistaSolicitudes controlador = loader.getController();
+        
+        Stage dialogo = new Stage();
+        dialogo.initModality(Modality.WINDOW_MODAL);
+        dialogo.initOwner(this.listaAmigosOn.getScene().getWindow());
+        dialogo.setScene(new Scene(vista));
+        dialogo.setTitle("Solicitudes pendientes");
+        dialogo.showAndWait();   
     }
 
     @FXML
     private void anhadirAmistad() throws IOException {
-        FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaDialogoModificar.fxml");
+        FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaAnhadirAmigo.fxml");
         Parent vista = loader.load();
-        ControladorVistaDialogoModificar controlador = loader.getController();
+        ControladorVistaAnhadirAmigo controlador = loader.getController();
         
         Stage dialogo = new Stage();
         dialogo.initModality(Modality.WINDOW_MODAL);
@@ -83,9 +119,9 @@ public class ControladorVistaGeneral {
 
     @FXML
     private void eliminarAmistad() throws IOException {
-        FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaDialogoModificar.fxml");
+        FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaEliminarAmigo.fxml");
         Parent vista = loader.load();
-        ControladorVistaDialogoModificar controlador = loader.getController();
+        ControladorVistaEliminarAmigo controlador = loader.getController();
         
         Stage dialogo = new Stage();
         dialogo.initModality(Modality.WINDOW_MODAL);
@@ -94,7 +130,7 @@ public class ControladorVistaGeneral {
         dialogo.setTitle("Eliminar amistad");
         dialogo.showAndWait();
         
-//      TODO: Enviar solicitud al servidor y actualizar tablas locales       
+//      TODO: Enviar solicitud al servidor      
     }
 
     @FXML

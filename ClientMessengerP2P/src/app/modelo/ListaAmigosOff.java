@@ -43,23 +43,40 @@ public class ListaAmigosOff {
     public void anhadirAmigo(Amigo amigo) throws Exception {
         if(!yaExiste(amigo)) {
             this.listaAmigosOff.add(amigo);
-        } else throw new Exception("El usuario no pertenecía a la lista de amigos conectados");
+        } else throw new Exception("El usuario ya pertenecía a la lista de amigos desconectados");
     }
     
     public void eliminarAmigo(Amigo amigo) throws Exception {
         if(yaExiste(amigo)) {
-            this.listaAmigosOff.add(amigo);
+            for(Amigo aux : this.listaAmigosOff) {
+                if(aux.getNick().getValue().equals(amigo.getNick().getValue())) {
+                    this.listaAmigosOff.remove(aux);
+                    break;
+                }
+            }
         }
         else throw new Exception("El usuario no pertenecía a la lista de amigos desconectados");
     }
     
-    private boolean yaExiste(Amigo amigo) {
+    public boolean yaExiste(Amigo amigo) {
         for(Amigo aux : this.listaAmigosOff) {
             if(aux.getNick().getValue().equals(amigo.getNick().getValue())) {
                 return true;
             }
         }
         return false;
+    }
+    
+    public Amigo recuperaAmigo(String nick) {
+        Amigo aux = new Amigo(nick, false, null, null);
+        if(yaExiste(aux)) {
+            for(Amigo i : this.listaAmigosOff) {
+                if(i.getNick().getValue().equals(nick)) {
+                    return i;
+                }
+            }
+        }
+        return null;
     }
     
 }

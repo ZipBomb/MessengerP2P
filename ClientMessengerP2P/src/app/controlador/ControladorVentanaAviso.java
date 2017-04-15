@@ -14,21 +14,41 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package app.vista;
+package app.controlador;
 
-import javafx.fxml.FXMLLoader;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.stage.Stage;
 
 /**
  * FXML Controller class
  *
  * @author Pablo Rey <pablo.rey.fernandez@rai.usc.es>
- * @version 1.0
- * @since 2017-04
  */
-public class VistaUtils {
-    public static FXMLLoader cargarVista(String vista) {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(VistaUtils.class.getClassLoader().getResource(vista));
-        return loader;
-    }    
+public class ControladorVentanaAviso {
+
+    private StringProperty mensaje;
+        
+    public void setMensaje(String mensaje) {
+        if(mensaje.length() > 0) {
+            this.mensaje.setValue(mensaje);
+        }
+    } 
+    
+    @FXML private Label etiquetaMensaje;
+    
+    @FXML
+    public void initialize() {
+        this.mensaje = new SimpleStringProperty("");
+        etiquetaMensaje.textProperty().bind(mensaje);
+    }  
+    
+    @FXML
+    private void cerrar() {
+        Stage stage = (Stage) this.etiquetaMensaje.getScene().getWindow();
+        stage.close();        
+    }
+    
 }

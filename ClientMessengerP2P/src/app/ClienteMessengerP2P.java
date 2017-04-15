@@ -16,7 +16,7 @@
  */
 package app;
 
-import app.vista.ControladorVistaLogin;
+import app.controlador.ControladorVistaLogin;
 import app.vista.VistaUtils;
 import javafx.application.Application;
 import static javafx.application.Application.launch;

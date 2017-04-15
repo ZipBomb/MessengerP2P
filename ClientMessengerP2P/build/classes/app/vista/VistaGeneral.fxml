@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="482.0" prefWidth="347.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.vista.ControladorVistaGeneral">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="482.0" prefWidth="347.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controlador.ControladorVistaGeneral">
    <top>
       <MenuBar fx:id="menu" BorderPane.alignment="CENTER">
         <menus>
@@ -46,7 +46,7 @@
    <center>
       <VBox prefHeight="200.0" prefWidth="347.0" BorderPane.alignment="CENTER">
          <children>
-            <TableView fx:id="listaAmigosOn" prefHeight="228.0" prefWidth="347.0">
+            <TableView fx:id="listaAmigosOn" onMouseClicked="#iniciarConversacion" prefHeight="228.0" prefWidth="347.0">
               <columns>
                 <TableColumn fx:id="columnaOn" prefWidth="75.0" text="Amigos conectados" />
               </columns>

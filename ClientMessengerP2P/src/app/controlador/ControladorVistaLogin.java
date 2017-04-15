@@ -14,11 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package app.vista;
+package app.controlador;
 
 import app.modelo.Amigo;
 import app.modelo.ListaAmigosOff;
 import app.modelo.ListaAmigosOn;
+import app.modelo.ListaResultadoBusqueda;
+import app.vista.VistaUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import javafx.application.HostServices;
@@ -27,6 +29,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
@@ -76,6 +79,8 @@ public class ControladorVistaLogin {
                         ListaAmigosOff.getInstancia().anhadirAmigo(amigo);
                     }
                 }
+                ListaResultadoBusqueda.getInstancia().anhadirAmigo(new Amigo("lopoe21", false, "", ""));
+                ListaResultadoBusqueda.getInstancia().anhadirAmigo(new Amigo("mdutcher", false, "", ""));                
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
@@ -94,7 +99,19 @@ public class ControladorVistaLogin {
         }
         else {
             this.campoUsuario.setText("");
-            this.campoPassword.setText("");            
+            this.campoPassword.setText("");
+            
+            FXMLLoader loader = VistaUtils.cargarVista("app/vista/VentanaAviso.fxml");
+            Parent vista = loader.load();
+            ControladorVentanaAviso controlador = loader.getController();
+            controlador.setMensaje("Credenciales incorrectas.");
+            
+            Stage dialogo = new Stage();
+            dialogo.initModality(Modality.WINDOW_MODAL);
+            dialogo.initOwner(this.campoUsuario.getScene().getWindow());
+            dialogo.setScene(new Scene(vista));
+            dialogo.setTitle("Error");
+            dialogo.showAndWait();         
         }        
     }
     
