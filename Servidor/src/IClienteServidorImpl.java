@@ -8,6 +8,7 @@ import AccesoDatos.ModeloUsuarios;
 import ClienteP2P.IClienteServidorPOA;
 import ClienteP2P.IServidorCliente;
 import ClienteP2P.Usuario;
+import java.util.ArrayList;
 import java.util.HashMap;
 import org.omg.CORBA.ORB;
 /**
@@ -33,24 +34,28 @@ public class IClienteServidorImpl extends IClienteServidorPOA {
 
     @Override
     public Usuario[] conectarse(String nick, String password, String ip, String puerto, IServidorCliente interfaz) {
-        /*Usuario[] usuarios = modeloUsuarios.conectarse(nick, password, ip, puerto);
+        Usuario[] usuarios = modeloUsuarios.conectarse(nick, password, ip, puerto);
         Usuario[] peticiones = modeloUsuarios.recpuerarSolicitudesAmistad(nick);        
         if(usuarios == null){
-            return null;
+            Usuario[] aux = new Usuario[1];
+            aux[0] = new Usuario(null, null, null, false); 
+            return aux;
         }
         else{                        
             clientes.put(nick, interfaz);
-            Usuario usuario = new Usuario(nick, ip, puerto, true);                      
-            for(int i = 0; i < usuarios.length; i++)
-                (clientes.get(usuarios[i].nick)).notificarConexion(usuario);
-            for(int i = 0; i < peticiones.length; i++)
-                (clientes.get(nick)).notificarSolicitudesPendientes(peticiones);
+            Usuario[] usuario = new Usuario[1];
+            usuario[0] = new Usuario(nick, ip, puerto, true);    
+            ArrayList<IServidorCliente> interfaces = new ArrayList<>();
+            for(int i = 0; i < usuarios.length; i++){             
+                interfaces.add(clientes.get(usuarios[i].nick));
+            }
+            hilo.introducirOrden(2, interfaces, usuario);
+            interfaces.clear();
+            interfaces.add(interfaz);
+            hilo.introducirOrden(1, interfaces, peticiones);
             
             return usuarios;
-        }*/
-        clientes.put(nick, interfaz);  
-        hilo.introducirOrden(1, interfaz, null);
-        return new Usuario[0];
+        }        
     }
 
     @Override
@@ -65,15 +70,16 @@ public class IClienteServidorImpl extends IClienteServidorPOA {
 
     @Override
     public void modificarPassword(String nick, String passwordNueva, String passwordVieja) {
-        //modeloUsuarios.modificarPassword(nick, passwordNueva, passwordVieja);
-        System.out.println("Sdsd");
+        modeloUsuarios.modificarPassword(nick, passwordNueva, passwordVieja);        
     }
 
     @Override
     public void anhadirAmigo(String nick, String amigo) {
         if(modeloUsuarios.estaOnline(amigo)){
             Usuario[] peticiones = modeloUsuarios.recpuerarSolicitudesAmistad(amigo);
-            clientes.get(amigo).notificarSolicitudesPendientes(peticiones);
+            ArrayList<IServidorCliente> interfaces = new ArrayList<>();
+            interfaces.add(clientes.get(amigo));
+            hilo.introducirOrden(4, interfaces, peticiones);
         }
         else
             modeloUsuarios.guardarPeticionAmistad(nick, amigo);
@@ -87,9 +93,12 @@ public class IClienteServidorImpl extends IClienteServidorPOA {
     @Override
     public void desconectarse(String nick) {
         Usuario[] amigos = modeloUsuarios.desconectarse(nick);
-        Usuario usuario = new Usuario(nick, null, null, false);
+        Usuario[] usuario = new Usuario[1];
+        usuario[0] = new Usuario(nick, null, null, false);
+        ArrayList<IServidorCliente> interfaces = new ArrayList<>();
         for(int i = 0; i < amigos.length; i++)
-            (clientes.get(amigos[i].nick)).notificarDesconexion(usuario);
+            interfaces.add(clientes.get(amigos[i].nick));
+        hilo.introducirOrden(3, interfaces, usuario);
         clientes.remove(nick);
     }
 

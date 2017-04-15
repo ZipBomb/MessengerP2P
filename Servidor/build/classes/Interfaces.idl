@@ -1,0 +1,27 @@
+module ClienteP2P {
+    struct Usuario {
+        string nick;
+        string ip;
+        string puerto;
+        boolean conectado;
+    };
+    typedef sequence<Usuario> listaUsuarios;
+    interface IServidorCliente {
+	oneway void hola(in string mes);
+	oneway void notificarSolicitudesPendientes(in listaUsuarios solicitudesPendientes);
+        oneway void notificarConexion(in Usuario usuario);
+        oneway void notificarDesconexion(in Usuario usuario);
+        oneway void notificarNuevaAmistad(in Usuario usuario);
+    };
+    interface IClienteServidor {
+        listaUsuarios conectarse(in string nick, in string password, in string ip, in string puerto, in IServidorCliente i);
+        listaUsuarios buscarUsuarios(in string cadenaBusqueda);
+        boolean registrarUsuario(in string nick, in string password, in string ip, in string puerto);
+        oneway void modificarPassword(in string nick, in string passwordNueva, in string passwordVieja);
+        oneway void anhadirAmigo(in string nick, in string amigo);
+        oneway void borrarAmigo(in string nick, in string amigo);
+        oneway void desconectarse(in string nick);
+	oneway void cambiarIP(in string nick, in string ipNueva);
+        oneway void shutdown();
+    };
+};

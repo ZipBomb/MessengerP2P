@@ -19,7 +19,7 @@ import java.util.HashMap;
 public class HiloCliente extends Thread{
     
     private ArrayList<Integer> colaOrdenes;
-    private ArrayList<IServidorCliente> colaInterfaces;
+    private ArrayList<ArrayList<IServidorCliente>> colaInterfaces;
     private ArrayList<Usuario[]> colaArgumentos;
 
     public HiloCliente() {
@@ -28,9 +28,9 @@ public class HiloCliente extends Thread{
         this.colaArgumentos = new ArrayList<>();
     }
     
-    public void introducirOrden(Integer codigo, IServidorCliente interfaz, Usuario[] argumentos){
+    public void introducirOrden(Integer codigo, ArrayList<IServidorCliente> interfaces, Usuario[] argumentos){
         colaOrdenes.add(codigo);
-        colaInterfaces.add(interfaz);
+        colaInterfaces.add(interfaces);
         colaArgumentos.add(argumentos);
     }
     
@@ -45,23 +45,28 @@ public class HiloCliente extends Thread{
     public void run(){
         while(true){    
             System.out.print("");
-            if(!colaOrdenes.isEmpty()){                
+            if(!colaOrdenes.isEmpty() && !colaInterfaces.isEmpty() && !colaArgumentos.isEmpty()){                
                 switch(colaOrdenes.get(0)){
                     //NotificarSolicitudes
-                    case 1:
-                        colaInterfaces.get(0).hola("asasa");
+                    case 1:                        
+                        colaInterfaces.get(0).get(0).notificarSolicitudesPendientes(colaArgumentos.get(0));
                         push();
                         break;
                     //NotificarConexion
                     case 2:
+                        for(int i = 0; i < colaInterfaces.get(0).size(); i++)     
+                            colaInterfaces.get(0).get(i).notificarConexion(colaArgumentos.get(0)[0]);                        
                         push();
                         break;
                     //NotificarDesconexion
                     case 3:
+                        for(int i = 0; i < colaInterfaces.get(0).size(); i++)
+                            colaInterfaces.get(0).get(i).notificarDesconexion(colaArgumentos.get(0)[0]);
                         push();
                         break;
                     //NotificarNuevaAmistad
                     case 4:
+                        colaInterfaces.get(0).get(0).notificarSolicitudesPendientes(colaArgumentos.get(0));
                         push();
                         break;
                 }
