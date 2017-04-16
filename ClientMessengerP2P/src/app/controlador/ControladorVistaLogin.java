@@ -20,6 +20,7 @@ import app.modelo.Amigo;
 import app.modelo.ListaAmigosOff;
 import app.modelo.ListaAmigosOn;
 import app.modelo.ListaResultadoBusqueda;
+import app.modelo.ListaSolicitudesPendientes;
 import app.vista.VistaUtils;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -79,8 +80,10 @@ public class ControladorVistaLogin {
                         ListaAmigosOff.getInstancia().anhadirAmigo(amigo);
                     }
                 }
-                ListaResultadoBusqueda.getInstancia().anhadirAmigo(new Amigo("lopoe21", false, "", ""));
-                ListaResultadoBusqueda.getInstancia().anhadirAmigo(new Amigo("mdutcher", false, "", ""));                
+                ListaResultadoBusqueda.getInstancia().anhadirAmigo(new Amigo("lopoe21", false, null, null));
+                ListaResultadoBusqueda.getInstancia().anhadirAmigo(new Amigo("mdutcher", false, null, null));                
+                ListaSolicitudesPendientes.getInstancia().anhadirAmigo(new Amigo("pepinho", false, null, null));
+                ListaSolicitudesPendientes.getInstancia().anhadirAmigo(new Amigo("josito", false, null, null));            
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }

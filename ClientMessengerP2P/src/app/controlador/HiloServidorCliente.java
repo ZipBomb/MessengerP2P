@@ -14,12 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package app;
+package app.controlador;
 
 import ClienteP2P.*;
 import app.modelo.Amigo;
 import app.modelo.ListaAmigosOff;
 import app.modelo.ListaAmigosOn;
+import app.modelo.ListaSolicitudesPendientes;
 import org.omg.CORBA.ORB;
 import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContextExt;
@@ -41,7 +42,15 @@ class IServidorClienteImpl extends IServidorClientePOA {
 
     @Override
     public void notificarSolicitudesPendientes(Usuario[] solicitudesPendientes) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Amigo amigo;
+        for(Usuario usuario : solicitudesPendientes) {
+            amigo = new Amigo(usuario.nick, usuario.conectado, usuario.ip, usuario.puerto);
+            try {
+                ListaSolicitudesPendientes.getInstancia().anhadirAmigo(amigo);
+            } catch(Exception ex) {
+                System.out.println("ERROR: " + ex.getMessage());
+            } 
+        }
     }
 
     @Override
@@ -83,11 +92,11 @@ class IServidorClienteImpl extends IServidorClientePOA {
 }
 
 // Hilo que atiende a los mensajes que llegan desde el servidor
-public class HiloEscucha extends Thread {
+public class HiloServidorCliente extends Thread {
 
     private String[] parametrosConexion;
     
-    public HiloEscucha(String[] parametrosConexion) {
+    public HiloServidorCliente(String[] parametrosConexion) {
         super();
         setParametrosConexion(parametrosConexion);
     }

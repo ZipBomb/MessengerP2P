@@ -17,11 +17,19 @@
 package app.controlador;
 
 import app.modelo.Amigo;
+import app.modelo.ListaAmigosOff;
+import app.modelo.ListaAmigosOn;
 import app.modelo.ListaSolicitudesPendientes;
+import app.vista.VistaUtils;
+import java.io.IOException;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
@@ -41,6 +49,7 @@ public class ControladorVistaSolicitudes {
         this.listaSolicitudesPendientes.setItems(ListaSolicitudesPendientes.getInstancia().getListaSolicitudesPendientes());
         this.columnaSolicitudes.setCellValueFactory(solicitud -> solicitud.getValue().getNick());
         this.listaSolicitudesPendientes.setPlaceholder(new Label("No tienes ninguna solicitud pendiente"));    
+        this.listaSolicitudesPendientes.getSelectionModel().selectFirst();    
     }
     
     @FXML
@@ -50,15 +59,56 @@ public class ControladorVistaSolicitudes {
     }
 
     @FXML
-    private void aceptar() {
-        Stage stage = (Stage) this.listaSolicitudesPendientes.getScene().getWindow();
-        stage.close();     
+    private void aceptar() throws IOException {
+        Amigo usuarioSeleccionado = this.listaSolicitudesPendientes.getSelectionModel().getSelectedItem();
+        FXMLLoader loader = VistaUtils.cargarVista("app/vista/VentanaAviso.fxml");
+        Parent vista = loader.load();
+        ControladorVentanaAviso controlador = loader.getController();           
+        
+//        TO DO: Notificar al servidor
+        try {
+            if(usuarioSeleccionado.estaConectado()) {
+                ListaAmigosOn.getInstancia().anhadirAmigo(usuarioSeleccionado);
+                ListaSolicitudesPendientes.getInstancia().eliminarAmigo(usuarioSeleccionado);
+            }
+            else {
+                ListaAmigosOff.getInstancia().anhadirAmigo(usuarioSeleccionado);
+                ListaSolicitudesPendientes.getInstancia().eliminarAmigo(usuarioSeleccionado);                
+            }           
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        controlador.setMensaje("Amistad añadida con éxito.");
+        Stage dialogo = new Stage();
+        dialogo.initModality(Modality.WINDOW_MODAL);
+        dialogo.initOwner(this.listaSolicitudesPendientes.getScene().getWindow());
+        dialogo.setScene(new Scene(vista));
+        dialogo.setTitle("Éxito");
+        dialogo.showAndWait();        
     }
 
     @FXML
-    private void rechazar() {
-        Stage stage = (Stage) this.listaSolicitudesPendientes.getScene().getWindow();
-        stage.close();     
+    private void rechazar() throws IOException {
+        Amigo usuarioSeleccionado = this.listaSolicitudesPendientes.getSelectionModel().getSelectedItem();
+        FXMLLoader loader = VistaUtils.cargarVista("app/vista/VentanaAviso.fxml");
+        Parent vista = loader.load();
+        ControladorVentanaAviso controlador = loader.getController();           
+        
+//        TO DO: Notificar al servidor
+        try {
+            ListaSolicitudesPendientes.getInstancia().eliminarAmigo(usuarioSeleccionado);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        controlador.setMensaje("Petición rechazada con éxito.");
+        Stage dialogo = new Stage();
+        dialogo.initModality(Modality.WINDOW_MODAL);
+        dialogo.initOwner(this.listaSolicitudesPendientes.getScene().getWindow());
+        dialogo.setScene(new Scene(vista));
+        dialogo.setTitle("Éxito");
+        dialogo.showAndWait();        
     }    
     
 }

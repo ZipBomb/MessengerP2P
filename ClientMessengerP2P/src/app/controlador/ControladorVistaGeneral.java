@@ -63,9 +63,19 @@ public class ControladorVistaGeneral {
     }
     
     @FXML
-    private void iniciarConversacion(MouseEvent event) {
+    private void iniciarConversacion(MouseEvent event) throws IOException {
         if(event.getClickCount() == 2) {
-            this.listaAmigosOn.getSelectionModel().getSelectedItem();
+            FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaConversacion.fxml");
+            Parent vista = loader.load();
+            ControladorVistaConversacion controlador = loader.getController();
+
+            //Peticion servidor
+            
+            Stage dialogo = new Stage();
+            dialogo.setScene(new Scene(vista));
+            dialogo.setTitle("Conversación con " 
+                    + this.listaAmigosOn.getSelectionModel().getSelectedItem().getNick().getValue());
+            dialogo.show();
         }
     }
 
