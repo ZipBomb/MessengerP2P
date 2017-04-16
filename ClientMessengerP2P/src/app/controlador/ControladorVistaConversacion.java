@@ -16,7 +16,13 @@
  */
 package app.controlador;
 
+import app.modelo.Conversacion;
+import app.modelo.Mensaje;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 
 /**
  * FXML Controller class
@@ -24,10 +30,30 @@ import javafx.fxml.FXML;
  * @author Pablo Rey <pablo.rey.fernandez@rai.usc.es>
  */
 public class ControladorVistaConversacion {
-
+    
+    private Conversacion conversacionActual;
+    
+    @FXML private TableView<Mensaje> listaMensajes;
+    @FXML private TableColumn<Mensaje, String> columnaMensajes;  
+    @FXML private TextArea cajaTexto;
+    
     @FXML
     public void initialize() {
-
+        this.listaMensajes.setPlaceholder(new Label("Todavía no habéis enviado ningún mensaje"));
     }    
+
+    @FXML
+    private void enviarMensaje() {
+        this.conversacionActual.anhadirMensaje(
+                new Mensaje(this.conversacionActual.getDestinatario(), this.cajaTexto.getText())
+        );
+        this.cajaTexto.setText("");
+    }
+    
+    public void initData(Conversacion conversacion) {
+        this.conversacionActual = conversacion;
+        this.listaMensajes.setItems(conversacion.getConversacion());
+        this.columnaMensajes.setCellValueFactory(mensaje -> mensaje.getValue().getContenido());    
+    }
     
 }

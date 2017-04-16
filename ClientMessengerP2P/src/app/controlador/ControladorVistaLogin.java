@@ -21,6 +21,7 @@ import app.modelo.ListaAmigosOff;
 import app.modelo.ListaAmigosOn;
 import app.modelo.ListaResultadoBusqueda;
 import app.modelo.ListaSolicitudesPendientes;
+import app.modelo.UsuarioActual;
 import app.vista.VistaUtils;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,6 +66,9 @@ public class ControladorVistaLogin {
         // Llamada a método remoto con comprobacion de login
         if(true) {
             try {
+                Amigo usuarioActual = new Amigo("zipbomb", true, "192.168.0.33", "6666");
+                UsuarioActual.getInstancia().setUsuarioActual(usuarioActual);
+                
                 ArrayList<Amigo> datosPrueba = new ArrayList();
                 datosPrueba.add(new Amigo("roquefort21", true, "192.168.0.56", "6666"));
                 datosPrueba.add(new Amigo("zipbomb3", false, null, null));

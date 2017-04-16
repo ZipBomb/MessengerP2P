@@ -12,14 +12,13 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="512.0" prefWidth="757.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controlador.ControladorVistaConversacion">
    <center>
       <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <TableView prefHeight="396.0" prefWidth="717.0">
+            <TableView fx:id="listaMensajes" prefHeight="396.0" prefWidth="717.0">
               <columns>
-                <TableColumn prefWidth="75.0" text="C1" />
+                <TableColumn fx:id="columnaMensajes" prefWidth="75.0" />
               </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -37,7 +36,7 @@
    <bottom>
       <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <TextArea prefHeight="80.0" prefWidth="525.0">
+            <TextArea fx:id="cajaTexto" prefHeight="80.0" prefWidth="525.0">
                <HBox.margin>
                   <Insets bottom="20.0" left="20.0" right="20.0" />
                </HBox.margin>
@@ -47,7 +46,7 @@
                   <Insets bottom="20.0" />
                </HBox.margin>
                <children>
-                  <Button mnemonicParsing="false" prefHeight="95.0" prefWidth="174.0" text="Enviar" />
+                  <Button mnemonicParsing="false" onAction="#enviarMensaje" prefHeight="95.0" prefWidth="174.0" text="Enviar" />
                </children>
             </VBox>
          </children>

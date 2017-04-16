@@ -19,6 +19,8 @@ package app.controlador;
 import app.modelo.Amigo;
 import app.modelo.ListaAmigosOff;
 import app.modelo.ListaAmigosOn;
+import app.modelo.ListaConversaciones;
+import app.modelo.Mensaje;
 import app.vista.VistaUtils;
 import java.io.IOException;
 import javafx.application.Platform;
@@ -69,12 +71,19 @@ public class ControladorVistaGeneral {
             Parent vista = loader.load();
             ControladorVistaConversacion controlador = loader.getController();
 
-            //Peticion servidor
+            Amigo destinatario = this.listaAmigosOn.getSelectionModel().getSelectedItem();
+            if(!ListaConversaciones.getInstancia().existeConversacion(destinatario)) {
+                ListaConversaciones.getInstancia().iniciarConversacion(destinatario);
+            }
+            Mensaje aux = new Mensaje(destinatario, "Que no estamos tan mal, hombre!");
+            ListaConversaciones.getInstancia().getConversacion(destinatario).anhadirMensaje(aux);
+
+            controlador.initData(ListaConversaciones.getInstancia().getConversacion(destinatario));            
             
             Stage dialogo = new Stage();
             dialogo.setScene(new Scene(vista));
             dialogo.setTitle("Conversación con " 
-                    + this.listaAmigosOn.getSelectionModel().getSelectedItem().getNick().getValue());
+                    + destinatario.getNick().getValue());
             dialogo.show();
         }
     }

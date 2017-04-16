@@ -26,7 +26,7 @@ import javafx.collections.ObservableList;
  * @since 2017-03
  */
 public class ListaAmigosOn {
-    
+
     private final ObservableList<Amigo> listaAmigosOn;
     private static final ListaAmigosOn INSTANCIA = new ListaAmigosOn();
     
@@ -79,6 +79,6 @@ public class ListaAmigosOn {
             }
         }
         return null;
-    }    
+    }
     
 }

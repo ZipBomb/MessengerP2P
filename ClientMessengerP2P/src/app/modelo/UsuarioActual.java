@@ -16,39 +16,25 @@
  */
 package app.modelo;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-
 /**
  *
  * @author Pablo Rey <pablo.rey.fernandez@rai.usc.es>
  */
-public class Amigo {
-    private final StringProperty nick;
-    private final boolean conectado;    
-    private final String ip;
-    private final String puerto;
+public class UsuarioActual {
+    
+    private Amigo UsuarioActual;
+    private static final UsuarioActual INSTANCIA = new UsuarioActual();
 
-    public Amigo(String nick, boolean conectado, String ip, String puerto) {
-        this.nick = new SimpleStringProperty(nick);
-        this.conectado = conectado;
-        this.ip = ip;
-        this.puerto = puerto;
+    public static UsuarioActual getInstancia() {
+        return INSTANCIA;
     }
 
-    public StringProperty getNick() {
-        return nick;
+    public Amigo getUsuarioActual() {
+        return UsuarioActual;
     }
 
-    public boolean estaConectado() {
-        return conectado;
+    public void setUsuarioActual(Amigo UsuarioActual) {
+        this.UsuarioActual = UsuarioActual;
     }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public String getPuerto() {
-        return puerto;
-    }
+    
 }

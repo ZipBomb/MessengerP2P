@@ -16,10 +16,33 @@
  */
 package app.modelo;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 /**
  *
  * @author Pablo Rey <pablo.rey.fernandez@rai.usc.es>
  */
 public class Conversacion {
+    
+    private final ObservableList<Mensaje> conversacion;
+    private final Amigo destinatario;
+    
+    public Conversacion(Amigo destinatario) {
+        this.destinatario = destinatario;
+        this.conversacion = FXCollections.observableArrayList();
+    }
+    
+    public ObservableList<Mensaje> getConversacion() {
+        return this.conversacion;
+    }
+    
+    public void anhadirMensaje(Mensaje mensaje) {
+        this.conversacion.add(mensaje);
+    }
+    
+    public Amigo getDestinatario() {
+        return this.destinatario;
+    }
     
 }
