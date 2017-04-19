@@ -16,137 +16,49 @@
  */
 package app.controlador;
 
-import ClienteP2P.*;
 import app.modelo.Amigo;
-import app.modelo.ListaAmigosOff;
-import app.modelo.ListaAmigosOn;
-import app.modelo.ListaSolicitudesPendientes;
-import org.omg.CORBA.ORB;
-import org.omg.CosNaming.NameComponent;
-import org.omg.CosNaming.NamingContextExt;
-import org.omg.CosNaming.NamingContextExtHelper;
-import org.omg.PortableServer.*;
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 /**
  *
  * @author Pablo Rey <pablo.rey.fernandez@rai.usc.es>
  */
 
-// Implementación del archivo .idl
-class IServidorClienteImpl extends IServidorClientePOA {
-    private ORB orb;
-
-    public void setORB(ORB orb_val) {
-        orb = orb_val; 
-    }
-
-    @Override
-    public void notificarSolicitudesPendientes(Usuario[] solicitudesPendientes) {
-        Amigo amigo;
-        for(Usuario usuario : solicitudesPendientes) {
-            amigo = new Amigo(usuario.nick, usuario.conectado, usuario.ip, usuario.puerto);
-            try {
-                ListaSolicitudesPendientes.getInstancia().anhadirAmigo(amigo);
-            } catch(Exception ex) {
-                System.out.println("ERROR: " + ex.getMessage());
-            } 
-        }
-    }
-
-    @Override
-    public void notificarConexion(Usuario usuario) {
-        Amigo amigo = new Amigo(usuario.nick, usuario.conectado, usuario.ip, usuario.puerto);
-        try {
-            ListaAmigosOff.getInstancia().eliminarAmigo(amigo);
-            ListaAmigosOn.getInstancia().anhadirAmigo(amigo);
-        } catch(Exception ex) {
-            System.out.println("ERROR: " + ex.getMessage());
-        }
-    }
-
-    @Override
-    public void notificarDesconexion(Usuario usuario) {
-        Amigo amigo = new Amigo(usuario.nick, usuario.conectado, usuario.ip, usuario.puerto);
-        try {
-            ListaAmigosOn.getInstancia().eliminarAmigo(amigo);
-            ListaAmigosOff.getInstancia().anhadirAmigo(amigo);
-        } catch(Exception ex) {
-            System.out.println("ERROR: " + ex.getMessage());
-        }
-    }
-
-    @Override
-    public void notificarNuevaAmistad(Usuario usuario) {
-        Amigo amigo = new Amigo(usuario.nick, usuario.conectado, usuario.ip, usuario.puerto);
-        try {
-            if(amigo.estaConectado()) {
-                ListaAmigosOn.getInstancia().anhadirAmigo(amigo);
-            }
-            else {
-                ListaAmigosOff.getInstancia().anhadirAmigo(amigo);
-            }
-        } catch(Exception ex) {
-            System.out.println("ERROR: " + ex.getMessage());            
-        }
-    }
-}
-
 // Hilo que atiende a los mensajes que llegan desde el servidor
 public class HiloServidorCliente extends Thread {
-
-    private String[] parametrosConexion;
     
-    public HiloServidorCliente(String[] parametrosConexion) {
+    private IClienteServidor interfazServidor;
+    private IServidorCliente interfazCliente;
+    
+    public HiloServidorCliente() {
         super();
-        setParametrosConexion(parametrosConexion);
-    }
-
-    private void setParametrosConexion(String[] parametrosConexion) {
-        if(parametrosConexion.length > 0) {
-            this.parametrosConexion = parametrosConexion;
-        }
     }
 
     @Override
     public void run() {
         try {
-            // create and initialize the ORB
-            ORB orb = ORB.init(parametrosConexion, null);
-
-            // get reference to rootpoa & activate the POAManager
-            POA rootpoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
-            rootpoa.the_POAManager().activate();
-
-            // create servant and register it with the ORB
-            IServidorClienteImpl helloImpl = new IServidorClienteImpl();
-            helloImpl.setORB(orb); 
-
-            // get object reference from the servant
-            org.omg.CORBA.Object ref = rootpoa.servant_to_reference(helloImpl);
-            IServidorCliente href = IServidorClienteHelper.narrow(ref);
-
-            // get the root naming context
-            // NameService invokes the name service
-            org.omg.CORBA.Object objRef =
-                orb.resolve_initial_references("NameService");
-            // Use NamingContextExt which is part of the Interoperable
-            // Naming Service (INS) specification.
-            NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
-
-            // bind the Object Reference in Naming
-            String name = "Hello";
-            NameComponent path[] = ncRef.to_name( name );
-            ncRef.rebind(path, href);
-
-            System.out.println("HelloServer ready and waiting ...");
-
-            // wait for invocations from clients
-            orb.run();
-        } catch (Exception e) {
-          System.err.println("ERROR: " + e);
-          e.printStackTrace(System.out);
+            String urlRegistro = "rmi://192.168.43.214:1099/Messenger";
+            this.interfazServidor = (IClienteServidor) Naming.lookup(urlRegistro);
+        } catch (MalformedURLException | NotBoundException | RemoteException ex) {
+            System.out.println(ex.getMessage());
         }
-        System.out.println("HelloServer Exiting ..."); 
+        this.interfazCliente = new IServidorClienteImpl();
+    }
+    
+    public ArrayList<Amigo> conectarse(String nick, String password) throws RemoteException {
+        Usuario[] misAmigos = interfazServidor.conectarse(nick, password, "192.168.43.146", "7777", this.interfazCliente);
+        if(misAmigos.length == 1 && misAmigos[0].getNick() == null) {
+            return null;
+        }
+        ArrayList<Amigo> listaAmigos = new ArrayList<>();
+        for(Usuario aux : misAmigos) {
+            listaAmigos.add(new Amigo(aux.getNick(), aux.isConectado(), aux.getIp(), aux.getPuerto()));
+        }
+        return listaAmigos;
     }
     
 }

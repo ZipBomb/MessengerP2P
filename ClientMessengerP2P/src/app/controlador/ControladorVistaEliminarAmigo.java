@@ -19,6 +19,7 @@ package app.controlador;
 import app.modelo.Amigo;
 import app.modelo.ListaAmigosOff;
 import app.modelo.ListaAmigosOn;
+import app.modelo.UsuarioActual;
 import app.vista.VistaUtils;
 import java.io.IOException;
 import javafx.fxml.FXML;
@@ -63,7 +64,15 @@ public class ControladorVistaEliminarAmigo {
         ControladorVentanaAviso controlador = loader.getController();  
         
         if(usuarioSeleccionado != null) {
-//            TODO: Avisar al servidor
+            // Notificación al servidor
+            String[] args = {
+                UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue(),
+                usuarioSeleccionado.getNick().getValue()
+            };
+            HiloClienteServidor hiloLlamada = new HiloClienteServidor(1, args);
+            hiloLlamada.start();
+            
+            // Actualizamos la vista
             if(usuarioSeleccionado.estaConectado()) {
                 ListaAmigosOn.getInstancia().eliminarAmigo(usuarioSeleccionado);
             } else {

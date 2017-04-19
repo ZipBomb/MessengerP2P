@@ -64,8 +64,10 @@ public class ControladorVistaSolicitudes {
         FXMLLoader loader = VistaUtils.cargarVista("app/vista/VentanaAviso.fxml");
         Parent vista = loader.load();
         ControladorVentanaAviso controlador = loader.getController();           
+
+        // TO DO: Confirmar amistad
         
-//        TO DO: Notificar al servidor
+        // Actualizar vista
         try {
             if(usuarioSeleccionado.estaConectado()) {
                 ListaAmigosOn.getInstancia().anhadirAmigo(usuarioSeleccionado);

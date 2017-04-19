@@ -25,9 +25,9 @@ import javafx.beans.property.StringProperty;
  */
 public class Amigo {
     private final StringProperty nick;
-    private final boolean conectado;    
+    private boolean conectado;    
     private final String ip;
-    private final String puerto;
+    private String puerto;
 
     public Amigo(String nick, boolean conectado, String ip, String puerto) {
         this.nick = new SimpleStringProperty(nick);
@@ -51,4 +51,13 @@ public class Amigo {
     public String getPuerto() {
         return puerto;
     }
+    
+    public void setIp(String ip) {
+        this.puerto = ip;
+    }
+
+    public void setConectado(boolean conectado) {
+        this.conectado = conectado;
+    }
+   
 }

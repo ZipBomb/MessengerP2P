@@ -21,6 +21,7 @@ import app.modelo.ListaAmigosOff;
 import app.modelo.ListaAmigosOn;
 import app.modelo.ListaConversaciones;
 import app.modelo.Mensaje;
+import app.modelo.UsuarioActual;
 import app.vista.VistaUtils;
 import java.io.IOException;
 import javafx.application.Platform;
@@ -45,8 +46,6 @@ import javafx.stage.Stage;
  */
 public class ControladorVistaGeneral {
     
-    private int numeroClicks;
-    
     @FXML private TableView<Amigo> listaAmigosOn;    
     @FXML private TableColumn<Amigo, String> columnaOn;
     @FXML private TableView<Amigo> listaAmigosOff;   
@@ -55,13 +54,15 @@ public class ControladorVistaGeneral {
         
     @FXML
     private void initialize() {
-        this.numeroClicks = 0;
         this.listaAmigosOn.setItems(ListaAmigosOn.getInstancia().getListaAmigosOn());
         this.columnaOn.setCellValueFactory(amigo -> amigo.getValue().getNick());
         this.listaAmigosOff.setItems(ListaAmigosOff.getInstancia().getListaAmigosOff());
         this.columnaOff.setCellValueFactory(amigo -> amigo.getValue().getNick());  
         this.listaAmigosOn.setPlaceholder(new Label("No tienes ningún amigo conectado."));
-        this.listaAmigosOff.setPlaceholder(new Label("No tienes ningún amigo desconectado."));        
+        this.listaAmigosOff.setPlaceholder(new Label("No tienes ningún amigo desconectado."));  
+        
+        HiloCambiosIP hiloCambiosIp = new HiloCambiosIP();
+        hiloCambiosIp.start();
     }
     
     @FXML
@@ -90,24 +91,28 @@ public class ControladorVistaGeneral {
 
     @FXML
     private void buscarUsuario() throws IOException {
+        //Peticion servidor
+        String[] args = { this.campoBusqueda.getText() };
+        HiloClienteServidor hiloLlamada = new HiloClienteServidor(4, args);
+        hiloLlamada.start();
+        
+        // Cargar vista            
         this.campoBusqueda.setText("");
         FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaResultadosBusqueda.fxml");
         Parent vista = loader.load();
         ControladorVistaResultadosBusqueda controlador = loader.getController();
-        
-        //Peticion servidor
         
         Stage dialogo = new Stage();
         dialogo.initModality(Modality.WINDOW_MODAL);
         dialogo.initOwner(this.listaAmigosOn.getScene().getWindow());
         dialogo.setScene(new Scene(vista));
         dialogo.setTitle("Usuarios encontrados");
-        dialogo.showAndWait();         
-//      TODO: Añadir llamadas a servidor
+        dialogo.showAndWait();
     }
     
     @FXML
     private void verSolicitudesPendientes() throws IOException {
+        // Cargar vista        
         FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaSolicitudes.fxml");
         Parent vista = loader.load();
         ControladorVistaSolicitudes controlador = loader.getController();
@@ -122,6 +127,7 @@ public class ControladorVistaGeneral {
 
     @FXML
     private void anhadirAmistad() throws IOException {
+        // Cargar vista
         FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaAnhadirAmigo.fxml");
         Parent vista = loader.load();
         ControladorVistaAnhadirAmigo controlador = loader.getController();
@@ -132,12 +138,11 @@ public class ControladorVistaGeneral {
         dialogo.setScene(new Scene(vista));
         dialogo.setTitle("Añadir amistad");
         dialogo.showAndWait();
-        
-//      TODO: Enviar solicitud al servidor
     }
 
     @FXML
     private void eliminarAmistad() throws IOException {
+        // Cargar vista        
         FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaEliminarAmigo.fxml");
         Parent vista = loader.load();
         ControladorVistaEliminarAmigo controlador = loader.getController();
@@ -147,16 +152,17 @@ public class ControladorVistaGeneral {
         dialogo.initOwner(this.listaAmigosOn.getScene().getWindow());
         dialogo.setScene(new Scene(vista));
         dialogo.setTitle("Eliminar amistad");
-        dialogo.showAndWait();
-        
-//      TODO: Enviar solicitud al servidor      
+        dialogo.showAndWait();    
     }
 
     @FXML
     private void cerrarSesion() {
-        Platform.exit();
+        //Peticion servidor
+        String[] args = { UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue() };
+        HiloClienteServidor hiloLlamada = new HiloClienteServidor(2, args);
+        hiloLlamada.start();            
         
-//        TODO: Notificar al servidor del cierre de sesión
+        Platform.exit();
     }    
     
 }

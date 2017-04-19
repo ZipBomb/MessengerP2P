@@ -16,25 +16,56 @@
  */
 package app.modelo;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
+import java.util.regex.Pattern;
+
 /**
  *
  * @author Pablo Rey <pablo.rey.fernandez@rai.usc.es>
  */
 public class UsuarioActual {
     
-    private Amigo UsuarioActual;
+    private Amigo usuarioActual;
     private static final UsuarioActual INSTANCIA = new UsuarioActual();
+    private final Pattern regexp;
+
+    private UsuarioActual() {
+        regexp = Pattern.compile("^(192\\.168\\.).*");
+    }
 
     public static UsuarioActual getInstancia() {
         return INSTANCIA;
     }
 
     public Amigo getUsuarioActual() {
-        return UsuarioActual;
+        return usuarioActual;
     }
 
-    public void setUsuarioActual(Amigo UsuarioActual) {
-        this.UsuarioActual = UsuarioActual;
+    public void setUsuarioActual(String nick) throws SocketException {
+        String ipLocal = this.getLocalIp();
+        this.usuarioActual = new Amigo(nick, true, ipLocal, "7777");  
     }
+    
+    public void actualizaIp() throws SocketException {
+        this.usuarioActual.setIp(this.getLocalIp());
+    }
+    
+    private String getLocalIp() throws SocketException {
+        Enumeration e = NetworkInterface.getNetworkInterfaces();
+        while(e.hasMoreElements()) {
+            NetworkInterface n = (NetworkInterface) e.nextElement();
+            Enumeration ee = n.getInetAddresses();
+            while(ee.hasMoreElements()) {
+                InetAddress i = (InetAddress) ee.nextElement();
+                if(regexp.matcher(i.getHostAddress()).matches()) {
+                    return i.getHostAddress();
+                }
+            }
+        }
+        return null;
+    }    
     
 }

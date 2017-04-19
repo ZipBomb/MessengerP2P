@@ -24,6 +24,10 @@ import app.modelo.ListaSolicitudesPendientes;
 import app.modelo.UsuarioActual;
 import app.vista.VistaUtils;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import javafx.application.HostServices;
 import javafx.fxml.FXML;
@@ -57,25 +61,30 @@ public class ControladorVistaLogin {
     @FXML private TextField campoPassword;
     
     @FXML
-    private void initialize() {
-    
-    }
+    private void initialize() {}
     
     @FXML
     private void iniciarSesion() throws IOException {
+        String nick = campoUsuario.getText();
+        String password = campoPassword.getText();
+        UsuarioActual.getInstancia().setUsuarioActual(nick);        
         // Llamada a método remoto con comprobacion de login
-        if(true) {
+        HiloServidorCliente hiloEscucha = new HiloServidorCliente();
+        // DESCOMENTAR CUANDO FUNCIONE
+        //hiloEscucha.start();
+        //ArrayList<Amigo> listaAmigos = hiloEscucha.conectarse(nick, password);        
+        ArrayList<Amigo> listaAmigos = null;
+        // CAMBIAR A != CUANDO FUNCIONE
+        if(listaAmigos == null) {
+            // Si el servidor acepta la autenticación cargamos las amistades
             try {
-                Amigo usuarioActual = new Amigo("zipbomb", true, "192.168.0.33", "6666");
-                UsuarioActual.getInstancia().setUsuarioActual(usuarioActual);
-                
+                // COMENTAR CUANDO FUNCIONE
                 ArrayList<Amigo> datosPrueba = new ArrayList();
                 datosPrueba.add(new Amigo("roquefort21", true, "192.168.0.56", "6666"));
                 datosPrueba.add(new Amigo("zipbomb3", false, null, null));
                 datosPrueba.add(new Amigo("mdbrimberry", false, null, null));
                 datosPrueba.add(new Amigo("MDO13", true, "192.168.0.56", "6667"));                
                 datosPrueba.add(new Amigo("mdutcher", true, "192.168.0.15", "6666"));             
-                
                 for(Amigo amigo : datosPrueba) {
                     if(amigo.estaConectado()) {
                         ListaAmigosOn.getInstancia().anhadirAmigo(amigo);
@@ -84,18 +93,22 @@ public class ControladorVistaLogin {
                         ListaAmigosOff.getInstancia().anhadirAmigo(amigo);
                     }
                 }
+                /* DESCOMENTAR CUANDO FUNCIONE
+                for(Amigo aux : listaAmigos) {
+                    if(aux.estaConectado()) {
+                        ListaAmigosOn.getInstancia().anhadirAmigo(aux);
+                    }
+                    else {
+                        ListaAmigosOff.getInstancia().anhadirAmigo(aux);
+                    }
+                }       */     
                 ListaResultadoBusqueda.getInstancia().anhadirAmigo(new Amigo("lopoe21", false, null, null));
                 ListaResultadoBusqueda.getInstancia().anhadirAmigo(new Amigo("mdutcher", false, null, null));                
                 ListaSolicitudesPendientes.getInstancia().anhadirAmigo(new Amigo("pepinho", false, null, null));
-                ListaSolicitudesPendientes.getInstancia().anhadirAmigo(new Amigo("josito", false, null, null));            
+                ListaSolicitudesPendientes.getInstancia().anhadirAmigo(new Amigo("josito", false, null, null));
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
-            
-//            Lanzamiento del hilo de escucha
-//            String[] args = {"", ""};
-//            HiloEscucha hiloEscucha = new HiloEscucha(args);
-//            hiloEscucha.start();
             
             Stage stage = (Stage)this.campoPassword.getScene().getWindow();
             FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaGeneral.fxml");
@@ -119,7 +132,7 @@ public class ControladorVistaLogin {
             dialogo.setScene(new Scene(vista));
             dialogo.setTitle("Error");
             dialogo.showAndWait();         
-        }        
+        }
     }
     
     @FXML
