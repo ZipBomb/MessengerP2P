@@ -1,5 +1,8 @@
+package app.controlador;
+
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -17,4 +20,6 @@ public interface IServidorCliente extends Remote {
     public void notificarConexion (Usuario usuario);
     public void notificarDesconexion (Usuario usuario);
     public void notificarNuevaAmistad (Usuario usuario);
+    public void notificarNuevaSolicitud (Usuario usuario);
+    public void actualizaIp (Usuario usuario);
 }

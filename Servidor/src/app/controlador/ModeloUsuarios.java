@@ -1,3 +1,5 @@
+package app.controlador;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -5,6 +7,7 @@
  */
 
 
+import app.controlador.Usuario;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -36,7 +39,7 @@ public class ModeloUsuarios {
         resultado = consulta.executeQuery();
         
         while(resultado.next()){
-            consulta = connection.prepareStatement("select * from usuarios where nick = ? and conectado = true");
+            consulta = connection.prepareStatement("select * from usuarios where nick = ?");
             String user = null;
             if(resultado.getString(1).equals(nick))
                 user = resultado.getString(2);
@@ -88,7 +91,7 @@ public class ModeloUsuarios {
         Connection connection = null;
         PreparedStatement consulta = null;
         ResultSet resultado = null;
-        ArrayList<Usuario> amigos = new ArrayList<>();        
+        ArrayList<Usuario> amigos = null;        
         try {
             connection = DriverManager.getConnection("jdbc:mysql://localhost/MessengerP2P","usuarioP2P","aplicacionP2P");
             connection.setAutoCommit(false);
@@ -100,6 +103,7 @@ public class ModeloUsuarios {
             resultado.next();
             
             if(resultado.getInt(1) == 1){
+                amigos = new ArrayList<>();
                 actualizarIPPuerto(connection, nick, ip, puerto);
                 amigos = recuperarAmigosConectados(connection, nick);                  
             }            
@@ -118,8 +122,8 @@ public class ModeloUsuarios {
                 System.out.println("Imposible cerrar cursores");              
             }
         }                    
-        
-        if(amigos.size() > 0){
+                
+        if(amigos != null){
             Usuario[] usuarios = new Usuario[amigos.size()];
             for(int i=0; i< amigos.size(); i++)
                 usuarios[i] = amigos.get(i);    

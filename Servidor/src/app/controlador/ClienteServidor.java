@@ -1,3 +1,5 @@
+package app.controlador;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -24,17 +26,20 @@ public class ClienteServidor extends UnicastRemoteObject implements IClienteServ
     public synchronized Usuario[] conectarse(String nick, String password, String ip, String puerto, IServidorCliente interfaz) throws RemoteException {
         Usuario[] amigos = modeloUsuarios.conectarse(nick, password, ip, puerto);
         Usuario[] peticiones = modeloUsuarios.recpuerarSolicitudesAmistad(nick);        
-        if(amigos == null)
-            return null;        
+        if(amigos == null){
+            return null;   
+        }
         else{                
-            System.out.println("asa");
             clientes.put(nick, interfaz);
-            Usuario usuario = new Usuario(nick, ip, puerto, true);    
-            for(int i = 0; i < amigos.length; i++)
-                clientes.get(amigos[i].getNick()).notificarConexion(usuario);            
+            Usuario usuario = new Usuario(nick, ip, puerto, true);
+            for(int i = 0; i < amigos.length; i++){
+                IServidorCliente aux = clientes.get(amigos[i].getNick());
+                if(aux != null)
+                    interfaz.notificarConexion(usuario);
+            }
             interfaz.notificarSolicitudesPendientes(peticiones);            
             return amigos;
-        }                  
+        }         
     }
 
     @Override
