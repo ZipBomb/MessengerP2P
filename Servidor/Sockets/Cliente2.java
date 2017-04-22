@@ -26,7 +26,7 @@ public class Cliente2 {
         }
 
         Socket socketCliente = null;
-        String nick = "Pablo";
+        String nick = "Pepe";
         while(true){
             socketCliente = socketServidor.accept();
             HiloRecibirComunicacion hilo = new HiloRecibirComunicacion(socketCliente,nick);
