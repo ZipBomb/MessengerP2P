@@ -46,8 +46,7 @@ public class ControladorVistaConversacion {
     
     @FXML
     public void initialize() {
-        this.listaMensajes.setPlaceholder(new Label("Todavía no habéis enviado ningún mensaje"));
-        
+        this.listaMensajes.setPlaceholder(new Label("Todavía no habéis enviado ningún mensaje"));       
     }    
 
     @FXML

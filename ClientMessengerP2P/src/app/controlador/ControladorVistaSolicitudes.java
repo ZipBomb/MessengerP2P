@@ -20,6 +20,7 @@ import app.modelo.Amigo;
 import app.modelo.ListaAmigosOff;
 import app.modelo.ListaAmigosOn;
 import app.modelo.ListaSolicitudesPendientes;
+import app.modelo.UsuarioActual;
 import app.vista.VistaUtils;
 import java.io.IOException;
 import javafx.fxml.FXML;
@@ -65,13 +66,12 @@ public class ControladorVistaSolicitudes {
         Parent vista = loader.load();
         ControladorVentanaAviso controlador = loader.getController();           
 
-        //DESCOMENTAR
-        /*String[] args = {
+        String[] args = {
             UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue(),
             usuarioSeleccionado.getNick().getValue()
         };                
         HiloClienteServidor hiloLlamada = new HiloClienteServidor(5, args);
-        hiloLlamada.start();*/
+        hiloLlamada.start();
         
         // Actualizar vista
         try {
@@ -102,15 +102,13 @@ public class ControladorVistaSolicitudes {
         FXMLLoader loader = VistaUtils.cargarVista("app/vista/VentanaAviso.fxml");
         Parent vista = loader.load();
         ControladorVentanaAviso controlador = loader.getController();           
-        
 
-        //DESCOMENTAR
-        /*String[] args = {
+        String[] args = {
             UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue(),
             usuarioSeleccionado.getNick().getValue()
         };                
         HiloClienteServidor hiloLlamada = new HiloClienteServidor(6, args);
-        hiloLlamada.start();*/
+        hiloLlamada.start();
         try {
             ListaSolicitudesPendientes.getInstancia().eliminarAmigo(usuarioSeleccionado);
         } catch (Exception ex) {

@@ -72,13 +72,12 @@ public class ControladorVistaResultadosBusqueda {
                     usuarioSeleccionado.getNick().getValue() +
                     " con éxito.");
                 SolicitudesAmistadEnviadas.getInstancia().anhadirSolicitud(usuarioSeleccionado);
-                //DESCOMENTAR
-                /*String[] args = {
+                String[] args = {
                     UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue(),
                     usuarioSeleccionado.getNick().getValue()
                 };                
                 HiloClienteServidor hiloLlamada = new HiloClienteServidor(0, args);
-                hiloLlamada.start();*/
+                hiloLlamada.start();
 
                 Stage dialogo = new Stage();
                 dialogo.initModality(Modality.WINDOW_MODAL);

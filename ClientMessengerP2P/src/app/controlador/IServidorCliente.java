@@ -13,4 +13,5 @@ public interface IServidorCliente extends Remote {
     public void notificarNuevaAmistad (Usuario usuario) throws RemoteException;
     public void notificarNuevaSolicitud (Usuario usuario) throws RemoteException;
     public void actualizaIp (Usuario usuario) throws RemoteException;
+    public void notificarEliminacion (Usuario usuario) throws RemoteException;
 }

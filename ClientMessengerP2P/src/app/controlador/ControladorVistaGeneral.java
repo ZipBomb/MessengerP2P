@@ -20,15 +20,12 @@ import app.modelo.Amigo;
 import app.modelo.ListaAmigosOff;
 import app.modelo.ListaAmigosOn;
 import app.modelo.ListaConversaciones;
-import app.modelo.ListaSolicitudesPendientes;
-import app.modelo.Mensaje;
 import app.modelo.UsuarioActual;
 import app.vista.VistaUtils;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -104,10 +101,9 @@ public class ControladorVistaGeneral {
 
     @FXML
     private void buscarUsuario() throws IOException {
-        //DESCOMENTAR
-        /*String[] args = { this.campoBusqueda.getText() };
+        String[] args = { this.campoBusqueda.getText() };
         HiloClienteServidor hiloLlamada = new HiloClienteServidor(4, args);
-        hiloLlamada.start();*/
+        hiloLlamada.start();
         
         // Cargar vista            
         this.campoBusqueda.setText("");
@@ -155,10 +151,9 @@ public class ControladorVistaGeneral {
 
     @FXML
     private void cerrarSesion() {
-        //DESCOMENTAR
-        /*String[] args = { UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue() };
+        String[] args = { UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue() };
         HiloClienteServidor hiloLlamada = new HiloClienteServidor(2, args);
-        hiloLlamada.start(); */           
+        hiloLlamada.start();          
         this.hiloCambiosIp.interrupt();
         this.hiloEscucha.interrupt();
         

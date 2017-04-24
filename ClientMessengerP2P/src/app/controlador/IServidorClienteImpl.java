@@ -22,6 +22,8 @@ import app.modelo.ListaAmigosOn;
 import app.modelo.ListaSolicitudesPendientes;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -98,6 +100,25 @@ public class IServidorClienteImpl extends UnicastRemoteObject implements IServid
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }        
+    }
+
+    @Override
+    public void notificarEliminacion(Usuario usuario) throws RemoteException {
+        Amigo amigo = new Amigo(usuario.getNick(), usuario.isConectado(), usuario.getIp(), usuario.getPuerto());
+        if(ListaAmigosOn.getInstancia().yaExiste(amigo)) {
+            try {
+                ListaAmigosOn.getInstancia().eliminarAmigo(amigo);
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+        else if(ListaAmigosOff.getInstancia().yaExiste(amigo)) {
+            try {
+                ListaAmigosOff.getInstancia().eliminarAmigo(amigo);
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }            
+        }
     }
     
 }

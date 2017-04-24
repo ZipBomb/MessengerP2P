@@ -44,9 +44,12 @@ public class UsuarioActual {
         return usuarioActual;
     }
 
-    public void setUsuarioActual(String nick) throws SocketException {
+    public void setUsuarioActual(String nick) throws SocketException, Exception {
         String ipLocal = this.getLocalIp();
-        this.usuarioActual = new Amigo(nick, true, ipLocal, "7777");  
+        if(ipLocal != null) {
+            this.usuarioActual = new Amigo(nick, true, ipLocal, "7777");  
+        }
+        else throw new Exception("No se pudo recuperar la IP");
     }
     
     public void actualizaIp() throws SocketException {

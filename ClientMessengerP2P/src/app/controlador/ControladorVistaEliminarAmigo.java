@@ -67,9 +67,8 @@ public class ControladorVistaEliminarAmigo {
                 UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue(),
                 usuarioSeleccionado.getNick().getValue()
             };
-            /* DESCOMENTAR */
-            //HiloClienteServidor hiloLlamada = new HiloClienteServidor(1, args);
-            //hiloLlamada.start();
+            HiloClienteServidor hiloLlamada = new HiloClienteServidor(1, args);
+            hiloLlamada.start();
             
             // Actualizamos la vista
             if(usuarioSeleccionado.estaConectado()) {
@@ -77,7 +76,6 @@ public class ControladorVistaEliminarAmigo {
             } else {
                 ListaAmigosOff.getInstancia().eliminarAmigo(usuarioSeleccionado);
             }
-      
             controlador.setMensaje("Amigo eliminado con éxito.");
             
             Stage dialogo = new Stage();

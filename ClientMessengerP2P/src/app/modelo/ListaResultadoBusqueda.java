@@ -57,7 +57,7 @@ public class ListaResultadoBusqueda {
                 }
             }
         }
-        else throw new Exception("El usuario no pertenecía a la lista de amigos desconectados");
+        else throw new Exception("El usuario no está en la lista");
     }    
     
     private boolean yaExiste(Amigo amigo) {
