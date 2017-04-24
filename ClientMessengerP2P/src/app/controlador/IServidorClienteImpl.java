@@ -20,12 +20,17 @@ import app.modelo.Amigo;
 import app.modelo.ListaAmigosOff;
 import app.modelo.ListaAmigosOn;
 import app.modelo.ListaSolicitudesPendientes;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 
 /**
  *
  * @author Pablo Rey <pablo.rey.fernandez@rai.usc.es>
  */
-public class IServidorClienteImpl implements IServidorCliente {
+public class IServidorClienteImpl extends UnicastRemoteObject implements IServidorCliente {
+
+    public IServidorClienteImpl() throws RemoteException {}
+    
     @Override
     public void notificarSolicitudesPendientes(Usuario[] solicitudesPendientes) {
         Amigo amigo;

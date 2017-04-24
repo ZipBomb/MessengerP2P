@@ -21,6 +21,7 @@ import app.modelo.ListaAmigosOff;
 import app.modelo.ListaAmigosOn;
 import app.modelo.ListaResultadoBusqueda;
 import app.modelo.SolicitudesAmistadEnviadas;
+import app.modelo.UsuarioActual;
 import app.vista.VistaUtils;
 import java.io.IOException;
 import javafx.fxml.FXML;
@@ -71,6 +72,13 @@ public class ControladorVistaResultadosBusqueda {
                     usuarioSeleccionado.getNick().getValue() +
                     " con éxito.");
                 SolicitudesAmistadEnviadas.getInstancia().anhadirSolicitud(usuarioSeleccionado);
+                //DESCOMENTAR
+                /*String[] args = {
+                    UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue(),
+                    usuarioSeleccionado.getNick().getValue()
+                };                
+                HiloClienteServidor hiloLlamada = new HiloClienteServidor(0, args);
+                hiloLlamada.start();*/
 
                 Stage dialogo = new Stage();
                 dialogo.initModality(Modality.WINDOW_MODAL);

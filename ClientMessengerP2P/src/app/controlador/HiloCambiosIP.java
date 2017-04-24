@@ -29,12 +29,12 @@ public class HiloCambiosIP extends Thread {
     
     public HiloCambiosIP() {
         super();
-        this.ipConocida = UsuarioActual.getInstancia().getUsuarioActual().getIp();        
+        this.ipConocida = UsuarioActual.getInstancia().getUsuarioActual().getIp();      
     }
     
     @Override
     public void run() {
-        while(true) {
+        while(!Thread.interrupted()) {
             try {
                 Thread.sleep(5000);
                 String ipActual = UsuarioActual.getInstancia().getUsuarioActual().getIp();

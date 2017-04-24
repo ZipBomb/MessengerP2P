@@ -48,19 +48,19 @@ public class HiloClienteServidor extends Thread {
     public void run() {
         try {
             switch(this.tipoOp) {
-                case 0: { // AñadirAmigo(nick, nombreAmigo)
+                case 0: { // añadirAmigo(nick, nombreAmigo)
                     if(args.length == 2) {
                         this.anhadirAmigo(args[0], args[1]);
                     } 
                     break;
                 }
-                case 1: { // BorrarAmigo(nick, nombreAmigo)
+                case 1: { // borrarAmigo(nick, nombreAmigo)
                     if(args.length == 2) {
                         this.borrarAmigo(args[0], args[1]);
                     } 
                     break;
                 }
-                case 2: { // Desconectarse(nick)
+                case 2: { // desconectarse(nick)
                     if(args.length == 1) {
                         this.desconectarse(args[0]);
                     } 
@@ -72,19 +72,19 @@ public class HiloClienteServidor extends Thread {
                     } 
                     break;
                 }
-                case 4: { // buscarUsuarios(String cadenaBusqueda)
+                case 4: { // buscarUsuarios(cadenaBusqueda)
                     if(args.length == 1) {
                         this.buscarUsuarios(args[0]);
                     } 
                     break;
                 }     
-                case 5: { // buscarUsuarios(String cadenaBusqueda)
+                case 5: { // aceptarPeticion(nick, nombreAmigo)
                     if(args.length == 2) {
                         this.aceptarPeticion(args[0], args[1]);
                     } 
                     break;
                 }     
-                case 6: { // buscarUsuarios(String cadenaBusqueda)
+                case 6: { // rechazarPeticion(nick, nombreAmigo)
                     if(args.length == 2) {
                         this.rechazarPeticion(args[0], args[1]);
                     } 

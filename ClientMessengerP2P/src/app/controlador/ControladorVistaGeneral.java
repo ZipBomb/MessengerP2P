@@ -20,11 +20,15 @@ import app.modelo.Amigo;
 import app.modelo.ListaAmigosOff;
 import app.modelo.ListaAmigosOn;
 import app.modelo.ListaConversaciones;
+import app.modelo.ListaSolicitudesPendientes;
 import app.modelo.Mensaje;
 import app.modelo.UsuarioActual;
 import app.vista.VistaUtils;
 import java.io.IOException;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -36,6 +40,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  * FXML Controller class
@@ -46,6 +51,10 @@ import javafx.stage.Stage;
  */
 public class ControladorVistaGeneral {
     
+    private HiloCambiosIP hiloCambiosIp;
+    private HiloEscucha hiloEscucha;
+    private ConcurrentHashMap<Amigo, Boolean> conversacionesAbiertas;
+    
     @FXML private TableView<Amigo> listaAmigosOn;    
     @FXML private TableColumn<Amigo, String> columnaOn;
     @FXML private TableView<Amigo> listaAmigosOff;   
@@ -53,7 +62,7 @@ public class ControladorVistaGeneral {
     @FXML private TextField campoBusqueda;
         
     @FXML
-    private void initialize() {
+    private void initialize() throws IOException {
         this.listaAmigosOn.setItems(ListaAmigosOn.getInstancia().getListaAmigosOn());
         this.columnaOn.setCellValueFactory(amigo -> amigo.getValue().getNick());
         this.listaAmigosOff.setItems(ListaAmigosOff.getInstancia().getListaAmigosOff());
@@ -61,13 +70,17 @@ public class ControladorVistaGeneral {
         this.listaAmigosOn.setPlaceholder(new Label("No tienes ningún amigo conectado."));
         this.listaAmigosOff.setPlaceholder(new Label("No tienes ningún amigo desconectado."));  
         
-        HiloCambiosIP hiloCambiosIp = new HiloCambiosIP();
-        hiloCambiosIp.start();
+        this.conversacionesAbiertas = new ConcurrentHashMap<>();
+        
+        this.hiloCambiosIp = new HiloCambiosIP();
+        this.hiloCambiosIp.start();
+        this.hiloEscucha = new HiloEscucha();
+        this.hiloEscucha.start();
     }
     
     @FXML
     private void iniciarConversacion(MouseEvent event) throws IOException {
-        if(event.getClickCount() == 2) {
+        if(event.getClickCount() == 2 && !this.conversacionesAbiertas.containsKey(this.listaAmigosOn.getSelectionModel().getSelectedItem())) {
             FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaConversacion.fxml");
             Parent vista = loader.load();
             ControladorVistaConversacion controlador = loader.getController();
@@ -76,25 +89,25 @@ public class ControladorVistaGeneral {
             if(!ListaConversaciones.getInstancia().existeConversacion(destinatario)) {
                 ListaConversaciones.getInstancia().iniciarConversacion(destinatario);
             }
-            Mensaje aux = new Mensaje(destinatario, "Que no estamos tan mal, hombre!");
-            ListaConversaciones.getInstancia().getConversacion(destinatario).anhadirMensaje(aux);
-
             controlador.initData(ListaConversaciones.getInstancia().getConversacion(destinatario));            
+            this.conversacionesAbiertas.put(destinatario, Boolean.TRUE);
             
             Stage dialogo = new Stage();
             dialogo.setScene(new Scene(vista));
-            dialogo.setTitle("Conversación con " 
-                    + destinatario.getNick().getValue());
+            dialogo.setTitle("Conversación con " + destinatario.getNick().getValue());
+            dialogo.setOnCloseRequest((WindowEvent event1) -> {
+                this.conversacionesAbiertas.put(destinatario, Boolean.FALSE);
+            });
             dialogo.show();
         }
     }
 
     @FXML
     private void buscarUsuario() throws IOException {
-        //Peticion servidor
-        String[] args = { this.campoBusqueda.getText() };
+        //DESCOMENTAR
+        /*String[] args = { this.campoBusqueda.getText() };
         HiloClienteServidor hiloLlamada = new HiloClienteServidor(4, args);
-        hiloLlamada.start();
+        hiloLlamada.start();*/
         
         // Cargar vista            
         this.campoBusqueda.setText("");
@@ -126,21 +139,6 @@ public class ControladorVistaGeneral {
     }
 
     @FXML
-    private void anhadirAmistad() throws IOException {
-        // Cargar vista
-        FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaAnhadirAmigo.fxml");
-        Parent vista = loader.load();
-        ControladorVistaAnhadirAmigo controlador = loader.getController();
-        
-        Stage dialogo = new Stage();
-        dialogo.initModality(Modality.WINDOW_MODAL);
-        dialogo.initOwner(this.listaAmigosOn.getScene().getWindow());
-        dialogo.setScene(new Scene(vista));
-        dialogo.setTitle("Añadir amistad");
-        dialogo.showAndWait();
-    }
-
-    @FXML
     private void eliminarAmistad() throws IOException {
         // Cargar vista        
         FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaEliminarAmigo.fxml");
@@ -157,12 +155,37 @@ public class ControladorVistaGeneral {
 
     @FXML
     private void cerrarSesion() {
-        //Peticion servidor
-        String[] args = { UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue() };
+        //DESCOMENTAR
+        /*String[] args = { UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue() };
         HiloClienteServidor hiloLlamada = new HiloClienteServidor(2, args);
-        hiloLlamada.start();            
+        hiloLlamada.start(); */           
+        this.hiloCambiosIp.interrupt();
+        this.hiloEscucha.interrupt();
         
         Platform.exit();
-    }    
+    }
     
+    public void reabreVentanaConversacion(Amigo amigo) throws IOException {
+        if(!this.conversacionesAbiertas.containsKey(amigo) 
+            || Objects.equals(this.conversacionesAbiertas.get(amigo), Boolean.FALSE)) {
+            FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaConversacion.fxml");
+            Parent vista = loader.load();
+            ControladorVistaConversacion controlador = loader.getController();
+
+            if(!ListaConversaciones.getInstancia().existeConversacion(amigo)) {
+                ListaConversaciones.getInstancia().iniciarConversacion(amigo);
+            }
+            controlador.initData(ListaConversaciones.getInstancia().getConversacion(amigo));            
+            this.conversacionesAbiertas.put(amigo, Boolean.TRUE);
+            
+            Stage dialogo = new Stage();
+            dialogo.setScene(new Scene(vista));
+            dialogo.setTitle("Conversación con " + amigo.getNick().getValue());
+            dialogo.setOnCloseRequest((WindowEvent event1) -> {
+                this.conversacionesAbiertas.put(amigo, Boolean.FALSE);
+            });
+            dialogo.show();            
+        }
+    }
+
 }

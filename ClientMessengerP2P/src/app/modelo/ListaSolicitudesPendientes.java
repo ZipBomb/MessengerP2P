@@ -68,5 +68,9 @@ public class ListaSolicitudesPendientes {
         }
         return false;
     }
+
+    public boolean isEmpty() {
+        return this.listaSolicitudesPendientes.isEmpty();
+    }
     
 }

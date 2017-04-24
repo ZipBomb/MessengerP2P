@@ -28,33 +28,20 @@ import javafx.beans.property.StringProperty;
 public class Mensaje {
     
     private final Amigo emisor;
-    private Amigo receptor;
     private final Date fecha;
     private final StringProperty contenido;
 
-    public Mensaje(Amigo receptor, String mensaje) {
-        this.emisor = UsuarioActual.getInstancia().getUsuarioActual();
-        setReceptor(receptor);
+    public Mensaje(Amigo emisor, String mensaje) {
+        this.emisor = emisor;
         this.fecha = new Date();
-        String contenidoFecha = new SimpleDateFormat("[HH:mm:ss] ").format(this.fecha);
-        
+        String contenidoFecha = new SimpleDateFormat("[HH:mm:ss] ").format(this.fecha);   
         this.contenido = new SimpleStringProperty(contenidoFecha 
                 + "@" + this.emisor.getNick().getValue()
                 + " dijo: " + mensaje);
     }
-
-    private void setReceptor(Amigo receptor) {
-        if(ListaAmigosOn.getInstancia().yaExiste(receptor)) {
-            this.receptor = receptor;
-        }
-    }    
     
     public Amigo getEmisor() {
         return emisor;
-    }
-
-    public Amigo getReceptor() {
-        return receptor;
     }
 
     public Date getFecha() {

@@ -19,7 +19,6 @@
           <Menu mnemonicParsing="false" text="Opciones">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#verSolicitudesPendientes" text="Ver solicitudes pendientes" />
-                  <MenuItem mnemonicParsing="false" onAction="#anhadirAmistad" text="Añadir amistad" />
                   <MenuItem mnemonicParsing="false" onAction="#eliminarAmistad" text="Eliminar amistad" />
                   <MenuItem mnemonicParsing="false" onAction="#cerrarSesion" text="Cerrar sesión" />
             </items>

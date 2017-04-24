@@ -65,7 +65,13 @@ public class ControladorVistaSolicitudes {
         Parent vista = loader.load();
         ControladorVentanaAviso controlador = loader.getController();           
 
-        // TO DO: Confirmar amistad
+        //DESCOMENTAR
+        /*String[] args = {
+            UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue(),
+            usuarioSeleccionado.getNick().getValue()
+        };                
+        HiloClienteServidor hiloLlamada = new HiloClienteServidor(5, args);
+        hiloLlamada.start();*/
         
         // Actualizar vista
         try {
@@ -97,7 +103,14 @@ public class ControladorVistaSolicitudes {
         Parent vista = loader.load();
         ControladorVentanaAviso controlador = loader.getController();           
         
-//        TO DO: Notificar al servidor
+
+        //DESCOMENTAR
+        /*String[] args = {
+            UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue(),
+            usuarioSeleccionado.getNick().getValue()
+        };                
+        HiloClienteServidor hiloLlamada = new HiloClienteServidor(6, args);
+        hiloLlamada.start();*/
         try {
             ListaSolicitudesPendientes.getInstancia().eliminarAmigo(usuarioSeleccionado);
         } catch (Exception ex) {

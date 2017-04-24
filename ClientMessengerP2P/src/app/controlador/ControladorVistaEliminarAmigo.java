@@ -42,9 +42,7 @@ public class ControladorVistaEliminarAmigo {
     @FXML private TextField campoNick;      
     
     @FXML
-    private void initialize() {
-        
-    }
+    private void initialize() {}
     
     @FXML
     private void cancelar() {
@@ -69,8 +67,9 @@ public class ControladorVistaEliminarAmigo {
                 UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue(),
                 usuarioSeleccionado.getNick().getValue()
             };
-            HiloClienteServidor hiloLlamada = new HiloClienteServidor(1, args);
-            hiloLlamada.start();
+            /* DESCOMENTAR */
+            //HiloClienteServidor hiloLlamada = new HiloClienteServidor(1, args);
+            //hiloLlamada.start();
             
             // Actualizamos la vista
             if(usuarioSeleccionado.estaConectado()) {
@@ -98,7 +97,7 @@ public class ControladorVistaEliminarAmigo {
             dialogo.initModality(Modality.WINDOW_MODAL);
             dialogo.initOwner(this.campoNick.getScene().getWindow());
             dialogo.setScene(new Scene(vista));
-            dialogo.setTitle("Érror");
+            dialogo.setTitle("Error");
             dialogo.showAndWait();
 
             Stage stage = (Stage) this.campoNick.getScene().getWindow();

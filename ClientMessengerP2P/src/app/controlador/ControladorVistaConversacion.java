@@ -16,8 +16,13 @@
  */
 package app.controlador;
 
+import app.modelo.Amigo;
 import app.modelo.Conversacion;
 import app.modelo.Mensaje;
+import app.modelo.UsuarioActual;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -32,6 +37,8 @@ import javafx.scene.control.TextArea;
 public class ControladorVistaConversacion {
     
     private Conversacion conversacionActual;
+    private DataOutputStream salida;
+    private Socket socketSalida;
     
     @FXML private TableView<Mensaje> listaMensajes;
     @FXML private TableColumn<Mensaje, String> columnaMensajes;  
@@ -40,20 +47,41 @@ public class ControladorVistaConversacion {
     @FXML
     public void initialize() {
         this.listaMensajes.setPlaceholder(new Label("Todavía no habéis enviado ningún mensaje"));
+        
     }    
 
     @FXML
-    private void enviarMensaje() {
+    private void enviarMensaje() throws IOException {
+        this.enviarTexto(this.cajaTexto.getText());
         this.conversacionActual.anhadirMensaje(
-                new Mensaje(this.conversacionActual.getDestinatario(), this.cajaTexto.getText())
+            new Mensaje(UsuarioActual.getInstancia().getUsuarioActual(), this.cajaTexto.getText())
         );
         this.cajaTexto.setText("");
     }
     
-    public void initData(Conversacion conversacion) {
+    @FXML
+    private void adjuntarArchivo() {
+        
+    }    
+    
+    public void initData(Conversacion conversacion) throws IOException {
         this.conversacionActual = conversacion;
+        Amigo destinatario = conversacion.getDestinatario();
+        this.socketSalida = new Socket(destinatario.getIp(), Integer.parseInt(destinatario.getPuerto()));
+        this.salida = new DataOutputStream(socketSalida.getOutputStream()); 
         this.listaMensajes.setItems(conversacion.getConversacion());
-        this.columnaMensajes.setCellValueFactory(mensaje -> mensaje.getValue().getContenido());    
+        this.columnaMensajes.setCellValueFactory(mensaje -> mensaje.getValue().getContenido());
+    }
+    
+    public void enviarTexto(String texto) throws IOException {
+        String cabecera = UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue() 
+                            + ".Text." + texto.length() + "." + texto;
+        byte[] paquete = cabecera.getBytes();
+        this.salida.write(paquete);
+    }
+    
+    public DataOutputStream getSalida() {
+        return this.salida;
     }
     
 }

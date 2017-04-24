@@ -48,6 +48,7 @@ import javafx.stage.Stage;
 public class ControladorVistaLogin {
     
     private HostServices hostServices;
+    private IClienteServidor interfazServidor;
     
     public HostServices getHostServices() {
         return hostServices;
@@ -61,23 +62,51 @@ public class ControladorVistaLogin {
     @FXML private TextField campoPassword;
     
     @FXML
-    private void initialize() {}
+    private void initialize() {
+        //DESCOMENTAR
+        /*try {
+            System.setProperty("java.rmi.server.hostname","192.168.43.214");
+            String registroURL = "rmi://localhost:1099/Messenger";
+            this.interfazServidor = (IClienteServidor) Naming.lookup(urlRegistro);
+        } catch (MalformedURLException | NotBoundException | RemoteException ex) {
+            System.out.println(ex.getMessage());
+        }
+        */ 
+    }
     
     @FXML
-    private void iniciarSesion() throws IOException {
+    private void iniciarSesion() throws IOException, InterruptedException {
         String nick = campoUsuario.getText();
         String password = campoPassword.getText();
         UsuarioActual.getInstancia().setUsuarioActual(nick);        
         // Llamada a método remoto con comprobacion de login
-        HiloServidorCliente hiloEscucha = new HiloServidorCliente();
-        // DESCOMENTAR CUANDO FUNCIONE
-        //hiloEscucha.start();
-        //ArrayList<Amigo> listaAmigos = hiloEscucha.conectarse(nick, password);        
-        ArrayList<Amigo> listaAmigos = null;
-        // CAMBIAR A != CUANDO FUNCIONE
-        if(listaAmigos == null) {
+        /*Usuario[] misAmigos = interfazServidor.conectarse(
+                        nick, password, 
+                        UsuarioActual.getInstancia().getUsuarioActual().getIp(), 
+                        UsuarioActual.getInstancia().getUsuarioActual().getPuerto(), 
+                        new IServidorClienteImpl()
+        );
+        if(misAmigos.length == 1 && misAmigos[0].getNick() == null) {
+            misAmigos = null;
+        }*/        
+        // CAMBIAR
+        Usuario[] misAmigos = null;
+        if(misAmigos == null) {
             // Si el servidor acepta la autenticación cargamos las amistades
             try {
+                /*ArrayList<Amigo> listaAmigos = new ArrayList<>();
+                for(Usuario aux : misAmigos) {
+                    listaAmigos.add(new Amigo(aux.getNick(), aux.isConectado(), aux.getIp(), aux.getPuerto()));
+                }               
+                // DESCOMENTAR CUANDO FUNCIONE
+                for(Amigo aux : listaAmigos) {
+                    if(aux.estaConectado()) {
+                        ListaAmigosOn.getInstancia().anhadirAmigo(aux);
+                    }
+                    else {
+                        ListaAmigosOff.getInstancia().anhadirAmigo(aux);
+                    }
+                }*/          
                 // COMENTAR CUANDO FUNCIONE
                 ArrayList<Amigo> datosPrueba = new ArrayList();
                 datosPrueba.add(new Amigo("roquefort21", true, "192.168.0.56", "6666"));
@@ -93,15 +122,6 @@ public class ControladorVistaLogin {
                         ListaAmigosOff.getInstancia().anhadirAmigo(amigo);
                     }
                 }
-                /* DESCOMENTAR CUANDO FUNCIONE
-                for(Amigo aux : listaAmigos) {
-                    if(aux.estaConectado()) {
-                        ListaAmigosOn.getInstancia().anhadirAmigo(aux);
-                    }
-                    else {
-                        ListaAmigosOff.getInstancia().anhadirAmigo(aux);
-                    }
-                }       */     
                 ListaResultadoBusqueda.getInstancia().anhadirAmigo(new Amigo("lopoe21", false, null, null));
                 ListaResultadoBusqueda.getInstancia().anhadirAmigo(new Amigo("mdutcher", false, null, null));                
                 ListaSolicitudesPendientes.getInstancia().anhadirAmigo(new Amigo("pepinho", false, null, null));
@@ -116,6 +136,21 @@ public class ControladorVistaLogin {
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
+
+            // Imprimir aviso de solicitudes pendientes
+            if(!ListaSolicitudesPendientes.getInstancia().isEmpty()) {
+                loader = VistaUtils.cargarVista("app/vista/VentanaAviso.fxml");
+                Parent vista = loader.load();
+                ControladorVentanaAviso controlador = loader.getController();     
+
+                controlador.setMensaje("Tienes nuevas solicitudes de amistad pendientes \n\t(Opciones -> Solicitudes pendientes)");
+                Stage dialogo = new Stage();
+                dialogo.initModality(Modality.WINDOW_MODAL);
+                dialogo.initOwner(this.campoUsuario.getScene().getWindow());
+                dialogo.setScene(new Scene(vista));
+                dialogo.setTitle("Solicitudes pendientes");
+                dialogo.showAndWait();
+            }          
         }
         else {
             this.campoUsuario.setText("");
