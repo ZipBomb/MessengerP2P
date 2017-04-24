@@ -1,0 +1,28 @@
+CREATE SCHEMA `MessengerP2P`;
+use MessengerP2P;
+CREATE USER 'usuarioP2P'@'localhost' IDENTIFIED BY 'aplicacionP2P';
+GRANT ALL PRIVILEGES ON MessengerP2P . * TO 'usuarioP2P'@'localhost';
+CREATE TABLE usuarios(nick varchar(16) NOT NULL, password varchar(16) NOT NULL, ip varchar(15), puerto varchar(5), conectado BOOLEAN NOT NULL, PRIMARY KEY(nick));
+CREATE TABLE amigos(usuario1 varchar(16) NOT NULL, usuario2 varchar(16) NOT NULL, PRIMARY KEY(usuario1, usuario2), FOREIGN KEY(usuario1) REFERENCES usuarios(nick), FOREIGN KEY(usuario2) REFERENCES usuarios(nick));
+CREATE TABLE peticionesPendientes(peticionario varchar(16) NOT NULL, receptor varchar(16) NOT NULL, PRIMARY KEY(peticionario, receptor), FOREIGN KEY(peticionario) REFERENCES usuarios(nick), FOREIGN KEY(receptor) REFERENCES usuarios(nick));
+insert into usuarios values("Pablo","pablo","","",false);
+insert into usuarios values("Miguel","miguel","","",false);
+insert into usuarios values("Santi","santi","","",false);
+insert into usuarios values("Paco","paco","","",false);
+insert into usuarios values("Laura","laura","","",false);
+insert into usuarios values("Ana","ana","","",false);
+insert into usuarios values("Carlos","carlos","","",false);
+insert into usuarios values("Pepe","pepe","","",false);
+insert into usuarios values("Marta","marta","","",false);
+insert into usuarios values("Lucia","lucia","","",false);
+insert into amigos values("Pablo","Miguel");
+insert into amigos values("Pablo","Lucia");
+insert into amigos values("Pablo","Ana");
+insert into amigos values("Miguel","Paco");
+insert into amigos values("Miguel","Carlos");
+insert into amigos values("Lucia","Laura");
+insert into peticionesPendientes values("Pablo","Carlos");
+insert into peticionesPendientes values("Pablo","Marta");
+insert into peticionesPendientes values("Santi","Pablo");
+insert into peticionesPendientes values("Ana","Pablo");
+
