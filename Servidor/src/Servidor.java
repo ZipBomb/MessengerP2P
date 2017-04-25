@@ -1,6 +1,6 @@
 
 
-import app.controlador.ClienteServidor;
+import app.controlador.IClienteServidorImpl;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -12,11 +12,11 @@ public class Servidor {
 
     public static void main(String args[]) throws RemoteException {
         String registroURL;
-        //System.setProperty("java.rmi.server.hostname","192.168.43.214");
+        System.setProperty("java.rmi.server.hostname","34.251.225.12");
         try{                         
             iniciarRegistro(1099);            
-            registroURL = "rmi://localhost:1099/Messenger";
-            ClienteServidor objetoExportado = new ClienteServidor();
+            registroURL = "rmi://34.251.225.12:1099/Messenger";
+            IClienteServidorImpl objetoExportado = new IClienteServidorImpl();
             Naming.rebind(registroURL, objetoExportado);
             System.out.println("Servidor Listo\n");            
         }
