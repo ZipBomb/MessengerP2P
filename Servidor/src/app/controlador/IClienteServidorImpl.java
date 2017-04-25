@@ -13,30 +13,30 @@ import java.util.HashMap;
  *
  * @author pablo
  */
-public class ClienteServidor extends UnicastRemoteObject implements IClienteServidor {
+public class IClienteServidorImpl extends UnicastRemoteObject implements IClienteServidor {
     private ModeloUsuarios modeloUsuarios;  
     private HashMap<String, IServidorCliente> clientes;
     
-    public ClienteServidor() throws RemoteException {
+    public IClienteServidorImpl() throws RemoteException {
         this.modeloUsuarios = new ModeloUsuarios(); 
         this.clientes = new HashMap<>();
     }
         
     @Override
     public synchronized Usuario[] conectarse(String nick, String password, String ip, String puerto, IServidorCliente interfaz) throws RemoteException {
-        Usuario[] amigos = modeloUsuarios.conectarse(nick, password, ip, puerto);
-        Usuario[] peticiones = modeloUsuarios.recpuerarSolicitudesAmistad(nick);        
-        if(amigos == null){
-            return null;   
-        }
+        Usuario[] amigos = modeloUsuarios.conectarse(nick, password, ip, puerto);               
+        if(amigos == null)
+            return null;        
         else{                
             clientes.put(nick, interfaz);
             Usuario usuario = new Usuario(nick, ip, puerto, true);
             for(int i = 0; i < amigos.length; i++){
-                IServidorCliente aux = clientes.get(amigos[i].getNick());
-                if(aux != null)
-                    interfaz.notificarConexion(usuario);
+                if(amigos[i].isConectado()){
+                    IServidorCliente aux = clientes.get(amigos[i].getNick());
+                    aux.notificarConexion(usuario);
+                }
             }
+            Usuario[] peticiones = modeloUsuarios.recpuerarSolicitudesAmistad(nick); 
             interfaz.notificarSolicitudesPendientes(peticiones);            
             return amigos;
         }         
@@ -70,6 +70,10 @@ public class ClienteServidor extends UnicastRemoteObject implements IClienteServ
     @Override
     public synchronized void borrarAmigo(String nick, String amigo) throws RemoteException {
         modeloUsuarios.borrarAmigo(nick, amigo);
+        if(modeloUsuarios.estaOnline(amigo)){
+            Usuario usuario = modeloUsuarios.recuperarUsuario(nick);
+            clientes.get(amigo).notificarEliminacion(usuario);
+        }
     }
 
     @Override
@@ -91,9 +95,10 @@ public class ClienteServidor extends UnicastRemoteObject implements IClienteServ
     public synchronized void desconectarse(String nick) throws RemoteException {
         Usuario[] amigos = modeloUsuarios.desconectarse(nick);
         Usuario usuario = new Usuario(nick, null, null, false);
-        
-        for(int i = 0; i < amigos.length; i++)
-            clientes.get(amigos[i].getNick()).notificarDesconexion(usuario);
+        if(amigos != null){
+            for(int i = 0; i < amigos.length; i++)
+                clientes.get(amigos[i].getNick()).notificarDesconexion(usuario);
+        }
         clientes.remove(nick);
     }
 
