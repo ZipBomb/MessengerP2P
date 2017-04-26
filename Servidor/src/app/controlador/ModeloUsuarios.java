@@ -10,6 +10,8 @@ package app.controlador;
 import app.controlador.Usuario;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -123,8 +125,13 @@ public class ModeloUsuarios {
             return false;
     }
 
-    public Usuario[] conectarse(String nick, String password, String ip, String puerto) throws SQLException{
-        Connection connection = conectar();
+    public Usuario[] conectarse(String nick, String password, String ip, String puerto) {
+        Connection connection = null;
+        try {
+            connection = conectar();
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeloUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
         PreparedStatement consulta = null;
         ResultSet resultado = null;
         ArrayList<Usuario> amigos = null;        
@@ -168,8 +175,13 @@ public class ModeloUsuarios {
             return null;        
     }
     
-    public Usuario[] buscarUsuarios(String cadenaBusqueda) throws SQLException {
-        Connection connection = conectar();
+    public Usuario[] buscarUsuarios(String cadenaBusqueda) {
+        Connection connection = null;
+        try {
+            connection = conectar();
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeloUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
         PreparedStatement consulta = null;
         ResultSet resultado = null;
         ArrayList<Usuario> users = new ArrayList<>();        
@@ -207,8 +219,13 @@ public class ModeloUsuarios {
         return usuarios;
     }
     
-    public boolean registrarUsuario(String nick, String password, String ip, String puerto) throws SQLException{
-        Connection connection = conectar();
+    public boolean registrarUsuario(String nick, String password, String ip, String puerto) {
+        Connection connection = null;
+        try {
+            connection = conectar();
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeloUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
         PreparedStatement consulta = null;
         boolean test = false;  
         try {
@@ -242,8 +259,13 @@ public class ModeloUsuarios {
         return test;
     }
     
-    public void modificarPassword(String nick, String passwordNueva, String passwordVieja) throws SQLException{
-        Connection connection = conectar();
+    public void modificarPassword(String nick, String passwordNueva, String passwordVieja) {
+        Connection connection = null;
+        try {
+            connection = conectar();
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeloUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
         PreparedStatement consulta = null;
         try {
             connection.setAutoCommit(false);
@@ -271,8 +293,13 @@ public class ModeloUsuarios {
         }            
     }
     
-    public void anhadirAmigo(String nick, String amigo) throws SQLException{
-        Connection connection = conectar();
+    public void anhadirAmigo(String nick, String amigo) {
+        Connection connection = null;
+        try {
+            connection = conectar();
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeloUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
         PreparedStatement consulta = null;
         try {
             connection.setAutoCommit(false);
@@ -298,8 +325,13 @@ public class ModeloUsuarios {
         }        
     }
     
-    public void borrarAmigo(String nick, String amigo) throws SQLException{
-        Connection connection = conectar();
+    public void borrarAmigo(String nick, String amigo) {
+        Connection connection = null;
+        try {
+            connection = conectar();
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeloUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
         PreparedStatement consulta = null;
         try {
             connection.setAutoCommit(false);
@@ -327,8 +359,13 @@ public class ModeloUsuarios {
         } 
     }
     
-    public Usuario[] desconectarse(String nick) throws SQLException{
-        Connection connection = conectar();
+    public Usuario[] desconectarse(String nick) {
+        Connection connection = null;
+        try {
+            connection = conectar();
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeloUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
         PreparedStatement consulta = null;
         ArrayList<Usuario> amigos = null;
         try {
@@ -365,8 +402,13 @@ public class ModeloUsuarios {
             return null;
     }
     
-    public void guardarPeticionAmistad(String peticionario, String receptor) throws SQLException{
-        Connection connection = conectar();
+    public void guardarPeticionAmistad(String peticionario, String receptor) {
+        Connection connection = null;
+        try {
+            connection = conectar();
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeloUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
         PreparedStatement consulta = null;
         try {
             connection.setAutoCommit(false);
@@ -392,8 +434,13 @@ public class ModeloUsuarios {
         }        
     }
     
-    public void eliminarPeticion(String receptor, String peticionario) throws SQLException{
-        Connection connection = conectar();
+    public void eliminarPeticion(String receptor, String peticionario) {
+        Connection connection = null;
+        try {
+            connection = conectar();
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeloUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
         PreparedStatement consulta = null;
         try {
             connection.setAutoCommit(false);
@@ -419,8 +466,13 @@ public class ModeloUsuarios {
         }        
     }
     
-    public void cambiarIP(String nick, String ipNueva) throws SQLException{
-        Connection connection = conectar();
+    public void cambiarIP(String nick, String ipNueva) {
+        Connection connection = null;
+        try {
+            connection = conectar();
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeloUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
         PreparedStatement consulta = null;
         try {
             connection.setAutoCommit(false);
@@ -446,8 +498,13 @@ public class ModeloUsuarios {
         }        
     }
     
-    public Usuario[] recpuerarSolicitudesAmistad(String receptor) throws SQLException{
-        Connection connection = conectar();
+    public Usuario[] recpuerarSolicitudesAmistad(String receptor) {
+        Connection connection = null;
+        try {
+            connection = conectar();
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeloUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
         PreparedStatement consulta = null;
         ResultSet resultado = null;       
         ResultSet resultado2 = null;
@@ -490,8 +547,13 @@ public class ModeloUsuarios {
         return peticionarios;
     }
     
-    public boolean estaOnline(String nick) throws SQLException{
-        Connection connection = conectar();
+    public boolean estaOnline(String nick) {
+        Connection connection = null;
+        try {
+            connection = conectar();
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeloUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
         PreparedStatement consulta = null;
         ResultSet resultado = null;       
         boolean test = false;
@@ -524,8 +586,13 @@ public class ModeloUsuarios {
         return test;
     }
     
-    public Usuario recuperarUsuario(String nick) throws SQLException{
-        Connection connection = conectar();
+    public Usuario recuperarUsuario(String nick) {
+        Connection connection = null;
+        try {
+            connection = conectar();
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeloUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
         PreparedStatement consulta = null;
         ResultSet resultado = null;       
         Usuario usuario = null;
@@ -556,8 +623,13 @@ public class ModeloUsuarios {
         return usuario;
     }
     
-    public boolean estaPendiente(String nick, String amigo) throws SQLException{
-        Connection connection = conectar();
+    public boolean estaPendiente(String nick, String amigo) {
+        Connection connection = null;
+        try {
+            connection = conectar();
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeloUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
         PreparedStatement consulta = null;
         ResultSet resultado = null;       
         boolean test = false;
@@ -591,8 +663,13 @@ public class ModeloUsuarios {
         return test;
     }
     
-    public Usuario[] recuperarAmigos(String nick) throws SQLException{
-        Connection connection = conectar();      
+    public Usuario[] recuperarAmigos(String nick) {
+        Connection connection = null;      
+        try {
+            connection = conectar();
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeloUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
         ArrayList<Usuario> amigos = null;
         try {
             connection.setAutoCommit(false);
