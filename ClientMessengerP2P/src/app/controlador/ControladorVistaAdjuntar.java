@@ -17,14 +17,14 @@
 package app.controlador;
 
 import app.modelo.UsuarioActual;
-import app.vista.VistaUtils;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -34,6 +34,8 @@ import javafx.stage.Stage;
  * @author Pablo Rey <pablo.rey.fernandez@rai.usc.es>
  */
 public class ControladorVistaAdjuntar {
+    
+    ObjectProperty<ControladorVistaConversacion> mainControllerProperty = new SimpleObjectProperty();
 
     @FXML private TextField campoRuta;      
     
@@ -47,31 +49,32 @@ public class ControladorVistaAdjuntar {
     }
     
     @FXML
-    private void confirmar() throws FileNotFoundException, IOException {
-        FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaConversacion.fxml");
-        ControladorVistaConversacion controlador = loader.getController();
+    private void adjuntar() throws FileNotFoundException, IOException {
         String ruta = this.campoRuta.getText();
-        File myFile = new File (ruta);
-        String nombre = myFile.getName();
-        byte [] arrayArchivo  = new byte [(int)myFile.length()];
-        FileInputStream fis = new FileInputStream(myFile);
-        BufferedInputStream bis = new BufferedInputStream(fis);
-        bis.read(arrayArchivo, 0, arrayArchivo.length);
-        String cabecera = UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue() 
-                            + ".Data." + nombre + "." + myFile.length() +".";
-        byte [] paquete = new byte[arrayArchivo.length + cabecera.length()];
+        File myFile = new File(ruta);    
+        if(myFile.isFile()) {
+            String nombre = myFile.getName();
+            byte[] arrayArchivo  = new byte [(int)myFile.length()];
+            FileInputStream fis = new FileInputStream(myFile);
+            BufferedInputStream bis = new BufferedInputStream(fis);
+            bis.read(arrayArchivo, 0, arrayArchivo.length);
+            String cabecera = UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue() 
+                                + ".Data." + nombre + "." + myFile.length() +".";
+            byte[] paquete = new byte[arrayArchivo.length + cabecera.length()];
 
-        for(int i = 0; i < cabecera.length(); i++){
-            paquete[i] = (byte)cabecera.charAt(i);                    
-        }                
-        int j = 0;
-        for(int i = cabecera.length() - 1; i < arrayArchivo.length + cabecera.length() - 1; i++){                    
-            paquete[i] = arrayArchivo[j];                    
-            j++;
-        }
-        controlador.getSalida().write(paquete);    
-        Stage stage = (Stage) this.campoRuta.getScene().getWindow();
-        stage.close();           
+            for(int i = 0; i < cabecera.length(); i++){
+                paquete[i] = (byte)cabecera.charAt(i);                    
+            }                
+            int j = 0;
+            for(int i = cabecera.length() - 1; i < arrayArchivo.length + cabecera.length() - 1; i++){                    
+                paquete[i] = arrayArchivo[j];                    
+                j++;
+            }
+            // Llamada al controlador para enviar el paquete por el canal TCP y cierre de ventana
+            this.mainControllerProperty.getValue().enviarData(paquete);
+            Stage stage = (Stage) this.campoRuta.getScene().getWindow();
+            stage.close();     
+        }      
     }
-
+    
 }

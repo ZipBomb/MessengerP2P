@@ -36,22 +36,23 @@ import javafx.fxml.FXMLLoader;
 public class HiloAtiendeCliente extends Thread {
         
     private final DataInputStream entrada;
+    private ControladorVistaGeneral controlador;
     
     public HiloAtiendeCliente(Socket socketCliente) throws IOException {
         super();
         this.entrada = new DataInputStream(socketCliente.getInputStream());
+        FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaGeneral.fxml");    
+        this.controlador = loader.getController();
     }
     
     @Override
     public void run() {
-        Amigo emisor;
-        FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaGeneral.fxml");
-        ControladorVistaGeneral controlador = loader.getController();        
+        Amigo emisor;    
         while(!Thread.interrupted()) {
             try {
                 String nickEmisor = this.leerParametro();  
                 String tipo = leerParametro();
-                emisor = ListaAmigosOn.getInstancia().recuperaAmigo(nickEmisor);                
+                emisor = ListaAmigosOn.getInstancia().recuperaAmigo(nickEmisor);
                 if(tipo.equals("Text")){
                     String tamanho = leerParametro();
                     Integer size = Integer.parseInt(tamanho);
@@ -69,11 +70,13 @@ public class HiloAtiendeCliente extends Thread {
                     controlador.reabreVentanaConversacion(emisor);
                 }
                 else if(tipo.equals("Data")){
+                    System.out.println(tipo);
                     String nombre = leerParametro();
                     String extension = leerParametro();
                     String tamanho = leerParametro();                    
                     String archivo = nombre + "." + extension;
                     Integer size = Integer.parseInt(tamanho);  
+                    System.out.println("Archivo: " + archivo + " Size: " + size);
                     this.escribirArchivo(archivo, size);
                     if(ListaConversaciones.getInstancia().existeConversacion(emisor)) {
                         ListaConversaciones.getInstancia().getConversacion(emisor)
@@ -90,7 +93,7 @@ public class HiloAtiendeCliente extends Thread {
         }
     }
     
-    private String leerParametro() throws IOException{
+    private String leerParametro() throws IOException {
         String parametro = new String();
         String caracter = new String();
         while(!caracter.equals(".")){

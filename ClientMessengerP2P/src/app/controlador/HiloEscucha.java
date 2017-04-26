@@ -51,8 +51,8 @@ public class HiloEscucha extends Thread {
         for(HiloAtiendeCliente conexion : this.conexiones) {
             try {
                 conexion.cerrarConversacion();
+                conexion.interrupt();                
             } catch (IOException ex) {}
-            conexion.interrupt();
         }
     }
     

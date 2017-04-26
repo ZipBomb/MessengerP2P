@@ -20,10 +20,14 @@ import app.modelo.Amigo;
 import app.modelo.ListaAmigosOff;
 import app.modelo.ListaAmigosOn;
 import app.modelo.ListaSolicitudesPendientes;
+import app.vista.VistaUtils;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 /**
  *

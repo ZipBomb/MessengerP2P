@@ -20,14 +20,20 @@ import app.modelo.Amigo;
 import app.modelo.Conversacion;
 import app.modelo.Mensaje;
 import app.modelo.UsuarioActual;
+import app.vista.VistaUtils;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 /**
  * FXML Controller class
@@ -59,8 +65,19 @@ public class ControladorVistaConversacion {
     }
     
     @FXML
-    private void adjuntarArchivo() {
+    private void adjuntarArchivo() throws IOException {
+        // Cargar vista        
+        FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaAdjuntarArchivo.fxml");
+        Parent vista = loader.load();
+        ControladorVistaAdjuntar controlador = loader.getController();
+        controlador.mainControllerProperty.set(this);
         
+        Stage dialogo = new Stage();
+        dialogo.initModality(Modality.WINDOW_MODAL);
+        dialogo.initOwner(this.listaMensajes.getScene().getWindow());
+        dialogo.setScene(new Scene(vista));
+        dialogo.setTitle("Adjuntar archivo");
+        dialogo.showAndWait();
     }    
     
     public void initData(Conversacion conversacion) throws IOException {
@@ -79,8 +96,8 @@ public class ControladorVistaConversacion {
         this.salida.write(paquete);
     }
     
-    public DataOutputStream getSalida() {
-        return this.salida;
+    public void enviarData(byte[] paquete) throws IOException {
+        this.salida.write(paquete);
     }
     
 }

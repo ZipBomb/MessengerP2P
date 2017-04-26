@@ -16,8 +16,16 @@
  */
 package app.modelo;
 
+import app.controlador.ControladorVentanaAviso;
+import app.vista.VistaUtils;
+import java.io.IOException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 /**
  *

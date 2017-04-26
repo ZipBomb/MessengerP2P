@@ -66,6 +66,7 @@ public class ControladorVistaGeneral {
         this.columnaOff.setCellValueFactory(amigo -> amigo.getValue().getNick());  
         this.listaAmigosOn.setPlaceholder(new Label("No tienes ningún amigo conectado."));
         this.listaAmigosOff.setPlaceholder(new Label("No tienes ningún amigo desconectado."));  
+        this.listaAmigosOn.getSelectionModel().selectFirst();
         
         this.conversacionesAbiertas = new ConcurrentHashMap<>();
         
@@ -91,10 +92,10 @@ public class ControladorVistaGeneral {
             
             Stage dialogo = new Stage();
             dialogo.setScene(new Scene(vista));
-            dialogo.setTitle("Conversación con " + destinatario.getNick().getValue());
             dialogo.setOnCloseRequest((WindowEvent event1) -> {
                 this.conversacionesAbiertas.put(destinatario, Boolean.FALSE);
-            });
+            });            
+            dialogo.setTitle("Conversación con " + destinatario.getNick().getValue());
             dialogo.show();
         }
     }
@@ -161,18 +162,20 @@ public class ControladorVistaGeneral {
     }
     
     public void reabreVentanaConversacion(Amigo amigo) throws IOException {
+        System.out.println("Contiene: " + this.conversacionesAbiertas.containsKey(amigo));
+        System.out.println("Estado conversación: " + this.conversacionesAbiertas.get(amigo));
         if(!this.conversacionesAbiertas.containsKey(amigo) 
             || Objects.equals(this.conversacionesAbiertas.get(amigo), Boolean.FALSE)) {
             FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaConversacion.fxml");
             Parent vista = loader.load();
-            ControladorVistaConversacion controlador = loader.getController();
 
+            System.out.println("Amigo: " + this.conversacionesAbiertas.get(amigo));
             if(!ListaConversaciones.getInstancia().existeConversacion(amigo)) {
                 ListaConversaciones.getInstancia().iniciarConversacion(amigo);
             }
-            controlador.initData(ListaConversaciones.getInstancia().getConversacion(amigo));            
+            // controlador.initData(ListaConversaciones.getInstancia().getConversacion(amigo));            
             this.conversacionesAbiertas.put(amigo, Boolean.TRUE);
-            
+            System.out.println("YEAH");
             Stage dialogo = new Stage();
             dialogo.setScene(new Scene(vista));
             dialogo.setTitle("Conversación con " + amigo.getNick().getValue());

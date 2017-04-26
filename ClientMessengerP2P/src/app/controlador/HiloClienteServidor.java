@@ -35,7 +35,7 @@ public class HiloClienteServidor extends Thread {
     
     public HiloClienteServidor(int tipoOp, String[] args) {
         try {
-            String urlRegistro = "rmi://192.168.43.214:1099/Messenger";
+            String urlRegistro = "rmi://192.168.43.96:1099/Messenger";
             this.interfazServidor = (IClienteServidor) Naming.lookup(urlRegistro);
         } catch (MalformedURLException | NotBoundException | RemoteException ex) {
             System.out.println(ex.getMessage());

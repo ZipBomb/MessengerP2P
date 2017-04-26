@@ -23,11 +23,16 @@ import app.modelo.ListaSolicitudesPendientes;
 import app.modelo.UsuarioActual;
 import app.vista.VistaUtils;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.regex.Pattern;
 import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -38,6 +43,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  * FXML Controller class
@@ -50,6 +56,7 @@ public class ControladorVistaLogin {
     
     private HostServices hostServices;
     private IClienteServidor interfazServidor;
+    private Pattern regexp;    
     
     public HostServices getHostServices() {
         return hostServices;
@@ -65,14 +72,16 @@ public class ControladorVistaLogin {
     @FXML
     private void initialize() {
         try {
-            System.setProperty("java.rmi.server.hostname", "192.168.43.146");
-            String urlRegistro = "rmi://192.168.43.214:1099/Messenger";
+            this.regexp = Pattern.compile("^(192\\.168\\.).*");
+            String ipLocal = this.getLocalIp();
+            System.setProperty("java.rmi.server.hostname", ipLocal);
+            String urlRegistro = "rmi://192.168.43.96:1099/Messenger";
             this.interfazServidor = (IClienteServidor) Naming.lookup(urlRegistro);
-        } catch (MalformedURLException | NotBoundException | RemoteException ex) {
+        } catch (MalformedURLException | NotBoundException | RemoteException | SocketException ex) {
             System.out.println(ex.getMessage());
         }
     }
-    
+
     @FXML
     private void iniciarSesion() throws IOException, InterruptedException {
         String nick = campoUsuario.getText();
@@ -107,26 +116,25 @@ public class ControladorVistaLogin {
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
-            
+            // Definición de la ventana principal
+            FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaGeneral.fxml");            
+            Parent vista = loader.load();            
             Stage stage = (Stage)this.campoPassword.getScene().getWindow();
-            FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaGeneral.fxml");
-            Parent root = loader.load();
-            Scene scene = new Scene(root);
+            Scene scene = new Scene(vista);
             stage.setScene(scene);
-            stage.show();
-            /*
-            String[] args = { UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue() };
-            HiloClienteServidor hiloLlamada = new HiloClienteServidor(2, args);
-            hiloLlamada.start();
-
-            Platform.exit();      */      
-
-            // Imprimir aviso de solicitudes pendientes
+            // Desconectarse al cerrar ventana            
+            stage.setOnCloseRequest((WindowEvent event) -> {
+                String[] args = { UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue() };
+                HiloClienteServidor hiloLlamada = new HiloClienteServidor(2, args);
+                hiloLlamada.start();
+                Platform.exit();
+            });              
+            stage.show();   
+            // Imprimir aviso de solicitudes pendientes en caso de que se hayan notificado
             if(!ListaSolicitudesPendientes.getInstancia().isEmpty()) {
                 loader = VistaUtils.cargarVista("app/vista/VentanaAviso.fxml");
-                Parent vista = loader.load();
+                vista = loader.load();
                 ControladorVentanaAviso controlador = loader.getController();     
-
                 controlador.setMensaje("Tienes nuevas solicitudes de amistad pendientes \n\t(Opciones -> Solicitudes pendientes)");
                 Stage dialogo = new Stage();
                 dialogo.initModality(Modality.WINDOW_MODAL);
@@ -137,14 +145,13 @@ public class ControladorVistaLogin {
             }          
         }
         else {
+            // En caso de identificación incorrecta impresión del mensaje de error
             this.campoUsuario.setText("");
             this.campoPassword.setText("");
-            
             FXMLLoader loader = VistaUtils.cargarVista("app/vista/VentanaAviso.fxml");
             Parent vista = loader.load();
             ControladorVentanaAviso controlador = loader.getController();
             controlador.setMensaje("Credenciales incorrectas o sesión ya iniciada.");
-            
             Stage dialogo = new Stage();
             dialogo.initModality(Modality.WINDOW_MODAL);
             dialogo.initOwner(this.campoUsuario.getScene().getWindow());
@@ -156,7 +163,21 @@ public class ControladorVistaLogin {
     
     @FXML
     private void registrarse() {
-        hostServices.showDocument("http://192.168.43.214:80");
+        hostServices.showDocument("192.168.43.96:80");
     }
     
+    private String getLocalIp() throws SocketException {
+        Enumeration e = NetworkInterface.getNetworkInterfaces();
+        while(e.hasMoreElements()) {
+            NetworkInterface n = (NetworkInterface) e.nextElement();
+            Enumeration ee = n.getInetAddresses();
+            while(ee.hasMoreElements()) {
+                InetAddress i = (InetAddress) ee.nextElement();
+                if(this.regexp.matcher(i.getHostAddress()).matches()) {
+                    return i.getHostAddress();
+                }
+            }
+        }
+        return null;
+    }        
 }
