@@ -17,6 +17,13 @@ import java.util.ArrayList;
  */
 public class ModeloUsuarios {
     
+    private Connection conectar() throws SQLException{
+        Connection connection = null;            
+        connection = DriverManager.getConnection("jdbc:mysql://localhost/MessengerP2P","usuarioP2P","aplicacionP2P");
+        
+        return connection;
+    }
+    
     private void actualizarIPPuerto(Connection connection, String nick, String ip, String puerto) throws SQLException{
         PreparedStatement consulta = null;
         consulta = connection.prepareStatement("update usuarios set ip = ?, puerto = ?, conectado = true where nick = ?");
@@ -116,13 +123,12 @@ public class ModeloUsuarios {
             return false;
     }
 
-    public Usuario[] conectarse(String nick, String password, String ip, String puerto){
-        Connection connection = null;
+    public Usuario[] conectarse(String nick, String password, String ip, String puerto) throws SQLException{
+        Connection connection = conectar();
         PreparedStatement consulta = null;
         ResultSet resultado = null;
         ArrayList<Usuario> amigos = null;        
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/MessengerP2P","usuarioP2P","aplicacionP2P");
             connection.setAutoCommit(false);
                                     
             consulta = connection.prepareStatement("select count(*) from usuarios where nick = ? and password = ? and conectado = false");
@@ -162,13 +168,12 @@ public class ModeloUsuarios {
             return null;        
     }
     
-    public Usuario[] buscarUsuarios(String cadenaBusqueda) {
-        Connection connection = null;
+    public Usuario[] buscarUsuarios(String cadenaBusqueda) throws SQLException {
+        Connection connection = conectar();
         PreparedStatement consulta = null;
         ResultSet resultado = null;
         ArrayList<Usuario> users = new ArrayList<>();        
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/MessengerP2P","usuarioP2P","aplicacionP2P");
             connection.setAutoCommit(false);
                                     
             consulta = connection.prepareStatement("select * from usuarios where nick like ?");
@@ -202,13 +207,11 @@ public class ModeloUsuarios {
         return usuarios;
     }
     
-    public boolean registrarUsuario(String nick, String password, String ip, String puerto){
-        Connection connection = null;
+    public boolean registrarUsuario(String nick, String password, String ip, String puerto) throws SQLException{
+        Connection connection = conectar();
         PreparedStatement consulta = null;
-        ResultSet resultado = null;
         boolean test = false;  
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/MessengerP2P","usuarioP2P","aplicacionP2P");
             connection.setAutoCommit(false);
             
             if(comprobarUsuario(connection, nick)){
@@ -239,12 +242,10 @@ public class ModeloUsuarios {
         return test;
     }
     
-    public void modificarPassword(String nick, String passwordNueva, String passwordVieja){
-        Connection connection = null;
+    public void modificarPassword(String nick, String passwordNueva, String passwordVieja) throws SQLException{
+        Connection connection = conectar();
         PreparedStatement consulta = null;
-        ResultSet resultado = null;       
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/MessengerP2P","usuarioP2P","aplicacionP2P");
             connection.setAutoCommit(false);
             
             if(comprobarPassword(connection, nick, passwordVieja)){
@@ -270,12 +271,10 @@ public class ModeloUsuarios {
         }            
     }
     
-    public void anhadirAmigo(String nick, String amigo){
-        Connection connection = null;
+    public void anhadirAmigo(String nick, String amigo) throws SQLException{
+        Connection connection = conectar();
         PreparedStatement consulta = null;
-        ResultSet resultado = null;       
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/MessengerP2P","usuarioP2P","aplicacionP2P");
             connection.setAutoCommit(false);
             
             consulta = connection.prepareStatement("insert into amigos values(?,?)");
@@ -299,12 +298,10 @@ public class ModeloUsuarios {
         }        
     }
     
-    public void borrarAmigo(String nick, String amigo){
-        Connection connection = null;
+    public void borrarAmigo(String nick, String amigo) throws SQLException{
+        Connection connection = conectar();
         PreparedStatement consulta = null;
-        ResultSet resultado = null;       
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/MessengerP2P","usuarioP2P","aplicacionP2P");
             connection.setAutoCommit(false);
             
             consulta = connection.prepareStatement("delete from amigos where (usuario1 = ? and usuario2 = ?) or (usuario1 = ? and usuario2 = ?)");
@@ -330,13 +327,11 @@ public class ModeloUsuarios {
         } 
     }
     
-    public Usuario[] desconectarse(String nick){
-        Connection connection = null;
+    public Usuario[] desconectarse(String nick) throws SQLException{
+        Connection connection = conectar();
         PreparedStatement consulta = null;
-        ResultSet resultado = null;     
         ArrayList<Usuario> amigos = null;
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/MessengerP2P","usuarioP2P","aplicacionP2P");
             connection.setAutoCommit(false);
             
             consulta = connection.prepareStatement("update usuarios set conectado = ? where nick = ?");
@@ -370,12 +365,10 @@ public class ModeloUsuarios {
             return null;
     }
     
-    public void guardarPeticionAmistad(String peticionario, String receptor){
-        Connection connection = null;
+    public void guardarPeticionAmistad(String peticionario, String receptor) throws SQLException{
+        Connection connection = conectar();
         PreparedStatement consulta = null;
-        ResultSet resultado = null;       
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/MessengerP2P","usuarioP2P","aplicacionP2P");
             connection.setAutoCommit(false);
             
             consulta = connection.prepareStatement("insert into peticionesPendientes(peticionario,receptor) values(?,?)");
@@ -399,12 +392,10 @@ public class ModeloUsuarios {
         }        
     }
     
-    public void eliminarPeticion(String receptor, String peticionario){
-        Connection connection = null;
+    public void eliminarPeticion(String receptor, String peticionario) throws SQLException{
+        Connection connection = conectar();
         PreparedStatement consulta = null;
-        ResultSet resultado = null;       
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/MessengerP2P","usuarioP2P","aplicacionP2P");
             connection.setAutoCommit(false);
             
             consulta = connection.prepareStatement("delete from peticionesPendientes where peticionario = ? and receptor = ?");
@@ -428,12 +419,10 @@ public class ModeloUsuarios {
         }        
     }
     
-    public void cambiarIP(String nick, String ipNueva){
-        Connection connection = null;
+    public void cambiarIP(String nick, String ipNueva) throws SQLException{
+        Connection connection = conectar();
         PreparedStatement consulta = null;
-        ResultSet resultado = null;               
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/MessengerP2P","usuarioP2P","aplicacionP2P");
             connection.setAutoCommit(false);
             
             consulta = connection.prepareStatement("update usuarios set ip = ? where nick = ?");
@@ -457,14 +446,13 @@ public class ModeloUsuarios {
         }        
     }
     
-    public Usuario[] recpuerarSolicitudesAmistad(String receptor){
-        Connection connection = null;
+    public Usuario[] recpuerarSolicitudesAmistad(String receptor) throws SQLException{
+        Connection connection = conectar();
         PreparedStatement consulta = null;
         ResultSet resultado = null;       
         ResultSet resultado2 = null;
         ArrayList<Usuario> usuarios = new ArrayList<>();
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/MessengerP2P","usuarioP2P","aplicacionP2P");
             connection.setAutoCommit(false);
             
             consulta = connection.prepareStatement("select peticionario from peticionesPendientes where receptor = ?");
@@ -502,13 +490,12 @@ public class ModeloUsuarios {
         return peticionarios;
     }
     
-    public boolean estaOnline(String nick){
-        Connection connection = null;
+    public boolean estaOnline(String nick) throws SQLException{
+        Connection connection = conectar();
         PreparedStatement consulta = null;
         ResultSet resultado = null;       
         boolean test = false;
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/MessengerP2P","usuarioP2P","aplicacionP2P");
             connection.setAutoCommit(false);
             
             consulta = connection.prepareStatement("select count(*) from usuarios where nick = ? and conectado = true");
@@ -537,13 +524,12 @@ public class ModeloUsuarios {
         return test;
     }
     
-    public Usuario recuperarUsuario(String nick){
-        Connection connection = null;
+    public Usuario recuperarUsuario(String nick) throws SQLException{
+        Connection connection = conectar();
         PreparedStatement consulta = null;
         ResultSet resultado = null;       
         Usuario usuario = null;
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/MessengerP2P","usuarioP2P","aplicacionP2P");
             connection.setAutoCommit(false);
             
             consulta = connection.prepareStatement("select * from usuarios where nick = ?");
@@ -570,13 +556,12 @@ public class ModeloUsuarios {
         return usuario;
     }
     
-    public boolean estaPendiente(String nick, String amigo){
-        Connection connection = null;
+    public boolean estaPendiente(String nick, String amigo) throws SQLException{
+        Connection connection = conectar();
         PreparedStatement consulta = null;
         ResultSet resultado = null;       
         boolean test = false;
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/MessengerP2P","usuarioP2P","aplicacionP2P");
             connection.setAutoCommit(false);
             
             consulta = connection.prepareStatement("select count(*) from peticionesPendientes where peticionario = ? and receptor = ?");
@@ -606,11 +591,10 @@ public class ModeloUsuarios {
         return test;
     }
     
-    public Usuario[] recuperarAmigos(String nick){
-        Connection connection = null;      
+    public Usuario[] recuperarAmigos(String nick) throws SQLException{
+        Connection connection = conectar();      
         ArrayList<Usuario> amigos = null;
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/MessengerP2P","usuarioP2P","aplicacionP2P");
             connection.setAutoCommit(false);
                         
             amigos = recuperarAmigosConectados(connection, nick);
