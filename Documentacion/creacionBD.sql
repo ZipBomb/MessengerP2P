@@ -24,5 +24,4 @@ insert into amigos values("Lucia","Laura");
 insert into peticionesPendientes values("Pablo","Carlos");
 insert into peticionesPendientes values("Pablo","Marta");
 insert into peticionesPendientes values("Santi","Pablo");
-insert into peticionesPendientes values("Ana","Pablo");
 
