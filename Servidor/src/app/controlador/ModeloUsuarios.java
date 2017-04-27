@@ -25,17 +25,7 @@ public class ModeloUsuarios {
         
         return connection;
     }
-    
-    private void actualizarIPPuerto(Connection connection, String nick, String ip, String puerto) throws SQLException{
-        PreparedStatement consulta = null;
-        consulta = connection.prepareStatement("update usuarios set ip = ?, puerto = ?, conectado = true where nick = ?");
-        consulta.setString(1, ip);
-        consulta.setString(2, puerto);
-        consulta.setString(3, nick);
-        consulta.executeUpdate();
         
-    }
-    
     private ArrayList<Usuario> recuperarAmigosConectados(Connection connection, String nick) throws SQLException{
         ArrayList<Usuario> amigos = new ArrayList<>();
         PreparedStatement consulta = null;
@@ -57,7 +47,7 @@ public class ModeloUsuarios {
             consulta.setString(1, user);                
             resultado2 = consulta.executeQuery();
             if(resultado2.next()){
-                Usuario amigo = new Usuario(resultado2.getString("nick"), resultado2.getString("ip"), resultado2.getString("puerto"), resultado2.getBoolean("conectado"));
+                Usuario amigo = new Usuario(resultado2.getString("nick"),resultado2.getBoolean("conectado"), null);
                 amigos.add(amigo);
             }                                    
         }
@@ -86,12 +76,20 @@ public class ModeloUsuarios {
             consulta.setString(1, user);                
             resultado2 = consulta.executeQuery();
             if(resultado2.next()){
-                Usuario amigo = new Usuario(resultado2.getString("nick"), resultado2.getString("ip"), resultado2.getString("puerto"), resultado2.getBoolean("conectado"));
+                Usuario amigo = new Usuario(resultado2.getString("nick"), resultado2.getBoolean("conectado"), null);
                 amigos.add(amigo);
             }                                    
         }
         
         return amigos;
+    }
+    
+    private void connect(Connection connection, String nick) throws SQLException{
+        PreparedStatement consulta = null;
+        
+        consulta = connection.prepareStatement("update usuarios set conectado = true where nick = ?");
+        consulta.setString(1, nick);
+        consulta.executeUpdate();
     }
     
     private boolean comprobarUsuario(Connection connection, String nick) throws SQLException{
@@ -125,7 +123,7 @@ public class ModeloUsuarios {
             return false;
     }
 
-    public Usuario[] conectarse(String nick, String password, String ip, String puerto) {
+    public Usuario[] conectarse(String nick, String password) {
         Connection connection = null;
         try {
             connection = conectar();
@@ -145,8 +143,8 @@ public class ModeloUsuarios {
             resultado.next();
             
             if(resultado.getInt(1) == 1){
-                amigos = new ArrayList<>();
-                actualizarIPPuerto(connection, nick, ip, puerto);
+                amigos = new ArrayList<>();               
+                connect(connection,nick);
                 amigos = recuperarAmigos(connection, nick);                  
             }            
                         
@@ -193,7 +191,7 @@ public class ModeloUsuarios {
             resultado = consulta.executeQuery();
             
             while(resultado.next()){
-                Usuario usuario = new Usuario(resultado.getString("nick"), resultado.getString("ip"), resultado.getString("puerto"), resultado.getBoolean("conectado"));
+                Usuario usuario = new Usuario(resultado.getString("nick"), resultado.getBoolean("conectado"), null);
                 users.add(usuario);
             }
                                                          
@@ -219,7 +217,7 @@ public class ModeloUsuarios {
         return usuarios;
     }
     
-    public boolean registrarUsuario(String nick, String password, String ip, String puerto) {
+    public boolean registrarUsuario(String nick, String password) {
         Connection connection = null;
         try {
             connection = conectar();
@@ -233,12 +231,10 @@ public class ModeloUsuarios {
             
             if(comprobarUsuario(connection, nick)){
                 test = true;
-                consulta = connection.prepareStatement("insert into usuarios values(?,?,?,?,?)");
+                consulta = connection.prepareStatement("insert into usuarios values(?,?,?)");
                 consulta.setString(1, nick);
                 consulta.setString(2, password);
-                consulta.setString(3, ip);
-                consulta.setString(4, puerto);
-                consulta.setBoolean(5, true);
+                consulta.setBoolean(3, true);
                 consulta.executeUpdate();
             }
                                                  
@@ -464,39 +460,7 @@ public class ModeloUsuarios {
                 System.out.println("Imposible cerrar cursores");              
             }
         }        
-    }
-    
-    public void cambiarIP(String nick, String ipNueva) {
-        Connection connection = null;
-        try {
-            connection = conectar();
-        } catch (SQLException ex) {
-            Logger.getLogger(ModeloUsuarios.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        PreparedStatement consulta = null;
-        try {
-            connection.setAutoCommit(false);
-            
-            consulta = connection.prepareStatement("update usuarios set ip = ? where nick = ?");
-            consulta.setString(1, ipNueva);
-            consulta.setString(2, nick);
-            consulta.executeUpdate();
-                                                 
-            connection.commit();
-        }catch (SQLException e){
-            System.out.println(e.getMessage());         
-            try{
-		if(connection!=null)
-                    connection.rollback();
-            }catch(SQLException se2){
-               se2.getMessage();
-            }
-        }finally{
-            try {connection.close();} catch (SQLException e){
-                System.out.println("Imposible cerrar cursores");              
-            }
-        }        
-    }
+    }        
     
     public Usuario[] recpuerarSolicitudesAmistad(String receptor) {
         Connection connection = null;
@@ -521,7 +485,7 @@ public class ModeloUsuarios {
                 consulta.setString(1, resultado.getString("peticionario"));
                 resultado2 = consulta.executeQuery();
                 if(resultado2.next()){
-                    Usuario user = new Usuario(resultado2.getString("nick"), resultado2.getString("ip"), resultado2.getString("puerto"), resultado2.getBoolean("conectado"));
+                    Usuario user = new Usuario(resultado2.getString("nick"), resultado2.getBoolean("conectado"), null);
                     usuarios.add(user);
                 }                
             }
@@ -603,7 +567,7 @@ public class ModeloUsuarios {
             consulta.setString(1, nick);            
             resultado = consulta.executeQuery();
             if(resultado.next()){
-                usuario = new Usuario(resultado.getString("nick"), resultado.getString("ip"), resultado.getString("puerto"), resultado.getBoolean("conectado"));
+                usuario = new Usuario(resultado.getString("nick"), resultado.getBoolean("conectado"), null);
             }
                                                  
             connection.commit();

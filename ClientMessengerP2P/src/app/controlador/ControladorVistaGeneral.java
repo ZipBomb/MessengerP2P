@@ -184,8 +184,8 @@ public class ControladorVistaGeneral {
         FXMLLoader loader = VistaUtils.cargarVista("app/vista/VentanaAviso.fxml");
         Parent vista = loader.load();
         ControladorVentanaAviso controlador = loader.getController();          
-        controlador.setMensaje(amigo.getNick().getValue() + 
-                "te ha enviado una solicitud de amistad.");
+        controlador.setMensaje("@" + amigo.getNick().getValue() + 
+                " te ha enviado una solicitud de amistad.");
 
         Stage dialogo = new Stage();
         dialogo.initModality(Modality.WINDOW_MODAL);
