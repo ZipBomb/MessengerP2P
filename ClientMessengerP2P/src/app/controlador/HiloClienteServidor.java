@@ -115,7 +115,7 @@ public class HiloClienteServidor extends Thread {
         for(Usuario aux : resultados) {
             try {
                 ListaResultadoBusqueda.getInstancia().anhadirAmigo(
-                    new Amigo(aux.getNick(), aux.isConectado(), aux.getIp(), aux.getPuerto())
+                    new Amigo(aux.getNick(), aux.isConectado(), aux.getInterfaz())
                 );
             } catch(Exception e) {}
         }

@@ -21,9 +21,7 @@ import app.modelo.Conversacion;
 import app.modelo.Mensaje;
 import app.modelo.UsuarioActual;
 import app.vista.VistaUtils;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -43,8 +41,6 @@ import javafx.stage.Stage;
 public class ControladorVistaConversacion {
     
     private Conversacion conversacionActual;
-    private DataOutputStream salida;
-    private Socket socketSalida;
     
     @FXML private TableView<Mensaje> listaMensajes;
     @FXML private TableColumn<Mensaje, String> columnaMensajes;  
@@ -57,7 +53,7 @@ public class ControladorVistaConversacion {
 
     @FXML
     private void enviarMensaje() throws IOException {
-        this.enviarTexto(this.cajaTexto.getText());
+        this.enviarTexto(this.cajaTexto.getText(), this.conversacionActual.getDestinatario());
         this.conversacionActual.anhadirMensaje(
             new Mensaje(UsuarioActual.getInstancia().getUsuarioActual(), this.cajaTexto.getText())
         );
@@ -82,22 +78,20 @@ public class ControladorVistaConversacion {
     
     public void initData(Conversacion conversacion) throws IOException {
         this.conversacionActual = conversacion;
-        Amigo destinatario = conversacion.getDestinatario();
-        this.socketSalida = new Socket(destinatario.getIp(), Integer.parseInt(destinatario.getPuerto()));
-        this.salida = new DataOutputStream(socketSalida.getOutputStream()); 
         this.listaMensajes.setItems(conversacion.getConversacion());
         this.columnaMensajes.setCellValueFactory(mensaje -> mensaje.getValue().getContenido());
     }
     
-    public void enviarTexto(String texto) throws IOException {
-        String cabecera = UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue() 
-                            + ".Text." + texto.length() + "." + texto;
-        byte[] paquete = cabecera.getBytes();
-        this.salida.write(paquete);
+    public void enviarTexto(String texto, Amigo destinatario) throws IOException {
+        destinatario.getInterfaz().enviarTexto(texto, destinatario.getNick().getValue());
     }
     
-    public void enviarData(byte[] paquete) throws IOException {
-        this.salida.write(paquete);
+    public void enviarData(byte[] paquete, Amigo destinatario) throws IOException {
+        destinatario.getInterfaz().enviarArchivo(paquete, destinatario.getNick().getValue());
+    }
+
+    public Conversacion getConversacionActual() {
+        return conversacionActual;
     }
     
 }

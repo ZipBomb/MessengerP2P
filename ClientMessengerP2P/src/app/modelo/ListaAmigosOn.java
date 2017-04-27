@@ -48,13 +48,6 @@ public class ListaAmigosOn {
         } else throw new Exception("El usuario no pertenecía a la lista de amigos conectados");
     }
     
-    public void modificaIp(String nick, String nuevaIp) throws Exception {
-        Amigo amigo = this.recuperaAmigo(nick);
-        if (amigo != null) {
-            amigo.setIp(nuevaIp);
-        } else throw new Exception("El usuario no pertenecía a la lista de amigos conectados");
-    }
-    
     public void eliminarAmigo(Amigo amigo) throws Exception {
         if(yaExiste(amigo)) {
             for(Amigo aux : this.listaAmigosOn) {
@@ -77,7 +70,7 @@ public class ListaAmigosOn {
     }
     
     public Amigo recuperaAmigo(String nick) {
-        Amigo aux = new Amigo(nick, false, null, null);
+        Amigo aux = new Amigo(nick, false, null);
         if(yaExiste(aux)) {
             for(Amigo i : this.listaAmigosOn) {
                 if(i.getNick().getValue().equals(nick)) {

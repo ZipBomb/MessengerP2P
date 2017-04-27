@@ -1,5 +1,6 @@
 package app.controlador;
 
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -13,16 +14,14 @@ package app.controlador;
  */
 public class Usuario implements IUsuario {
     
-    private String nick = null;
-    private String ip = null;
-    private String puerto = null;
-    private boolean conectado = false;
+    private String nick;
+    private boolean conectado;
+    private IComunicacionCliente interfaz;
 
-    public Usuario (String _nick, String _ip, String _puerto, boolean _conectado) {
-      nick = _nick;
-      ip = _ip;
-      puerto = _puerto;
-      conectado = _conectado;
+    public Usuario (String nick, boolean conectado, IComunicacionCliente interfaz) {
+        this.nick = nick;
+        this.conectado = conectado;
+        this.interfaz = interfaz;
     } 
 
     @Override
@@ -33,27 +32,7 @@ public class Usuario implements IUsuario {
     @Override
     public void setNick(String nick) {
         this.nick = nick;
-    }
-
-    @Override
-    public String getIp() {
-        return ip;
-    }
-
-    @Override
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    @Override
-    public String getPuerto() {
-        return puerto;
-    }
-
-    @Override
-    public void setPuerto(String puerto) {
-        this.puerto = puerto;
-    }
+    }   
 
     @Override
     public boolean isConectado() {
@@ -65,6 +44,13 @@ public class Usuario implements IUsuario {
         this.conectado = conectado;
     }
     
+    @Override
+    public IComunicacionCliente getInterfaz() {
+        return interfaz;
+    }
     
-    
+    @Override
+    public void setInterfaz(IComunicacionCliente interfaz) {
+        this.interfaz = interfaz;
+    }            
 }

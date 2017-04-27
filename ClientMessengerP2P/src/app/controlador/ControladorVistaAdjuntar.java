@@ -16,7 +16,6 @@
  */
 package app.controlador;
 
-import app.modelo.UsuarioActual;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -54,13 +53,13 @@ public class ControladorVistaAdjuntar {
         File myFile = new File(ruta);    
         if(myFile.isFile()) {
             String nombre = myFile.getName();
-            byte[] arrayArchivo  = new byte [(int)myFile.length()];
+            byte [] arrayArchivo  = new byte [(int)myFile.length()];
             FileInputStream fis = new FileInputStream(myFile);
             BufferedInputStream bis = new BufferedInputStream(fis);
-            bis.read(arrayArchivo, 0, arrayArchivo.length);
-            String cabecera = UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue() 
-                                + ".Data." + nombre + "." + myFile.length() +".";
-            byte[] paquete = new byte[arrayArchivo.length + cabecera.length()];
+            bis.read(arrayArchivo,0,arrayArchivo.length);
+            String cabecera = nombre + ":";
+
+            byte [] paquete = new byte[arrayArchivo.length + cabecera.length()];
 
             for(int i = 0; i < cabecera.length(); i++){
                 paquete[i] = (byte)cabecera.charAt(i);                    
@@ -71,7 +70,10 @@ public class ControladorVistaAdjuntar {
                 j++;
             }
             // Llamada al controlador para enviar el paquete por el canal TCP y cierre de ventana
-            this.mainControllerProperty.getValue().enviarData(paquete);
+            this.mainControllerProperty.getValue().enviarData(
+                    paquete, 
+                    this.mainControllerProperty.getValue().getConversacionActual().getDestinatario()
+            );
             Stage stage = (Stage) this.campoRuta.getScene().getWindow();
             stage.close();     
         }      

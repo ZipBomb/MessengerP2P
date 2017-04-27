@@ -68,7 +68,7 @@ public class ListaAmigosOff {
     }
     
     public Amigo recuperaAmigo(String nick) {
-        Amigo aux = new Amigo(nick, false, null, null);
+        Amigo aux = new Amigo(nick, false, null);
         if(yaExiste(aux)) {
             for(Amigo i : this.listaAmigosOff) {
                 if(i.getNick().getValue().equals(nick)) {

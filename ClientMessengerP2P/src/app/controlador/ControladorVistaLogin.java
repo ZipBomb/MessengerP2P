@@ -75,7 +75,7 @@ public class ControladorVistaLogin {
             this.regexp = Pattern.compile("^(192\\.168\\.).*");
             String ipLocal = this.getLocalIp();
             System.setProperty("java.rmi.server.hostname", ipLocal);
-            String urlRegistro = "rmi://192.168.43.96:1099/Messenger";
+            String urlRegistro = "rmi://192.168.43.214:1099/Messenger";
             this.interfazServidor = (IClienteServidor) Naming.lookup(urlRegistro);
         } catch (MalformedURLException | NotBoundException | RemoteException | SocketException ex) {
             System.out.println(ex.getMessage());
@@ -94,16 +94,15 @@ public class ControladorVistaLogin {
         // Llamada a método remoto con comprobacion de login
         Usuario[] misAmigos = interfazServidor.conectarse(
                         nick, password, 
-                        UsuarioActual.getInstancia().getUsuarioActual().getIp(), 
-                        UsuarioActual.getInstancia().getUsuarioActual().getPuerto(), 
-                        new IServidorClienteImpl()
+                        new IServidorClienteImpl(),
+                        new IComunicacionClienteImpl()
         );
         if(misAmigos != null) {
             // Si el servidor acepta la autenticación cargamos las amistades
             try {
                 ArrayList<Amigo> listaAmigos = new ArrayList<>();
                 for(Usuario aux : misAmigos) {
-                    listaAmigos.add(new Amigo(aux.getNick(), aux.isConectado(), aux.getIp(), aux.getPuerto()));
+                    listaAmigos.add(new Amigo(aux.getNick(), aux.isConectado(), aux.getInterfaz()));
                 }
                 for(Amigo aux : listaAmigos) {
                     if(aux.estaConectado()) {

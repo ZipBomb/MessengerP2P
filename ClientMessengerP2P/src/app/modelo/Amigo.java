@@ -16,6 +16,7 @@
  */
 package app.modelo;
 
+import app.controlador.IComunicacionCliente;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -25,15 +26,13 @@ import javafx.beans.property.StringProperty;
  */
 public class Amigo {
     private final StringProperty nick;
-    private boolean conectado;    
-    private final String ip;
-    private String puerto;
+    private boolean conectado;
+    private final IComunicacionCliente interfaz;
 
-    public Amigo(String nick, boolean conectado, String ip, String puerto) {
+    public Amigo(String nick, boolean conectado, IComunicacionCliente interfaz) {
         this.nick = new SimpleStringProperty(nick);
         this.conectado = conectado;
-        this.ip = ip;
-        this.puerto = puerto;
+        this.interfaz = interfaz;
     }
 
     public StringProperty getNick() {
@@ -44,20 +43,12 @@ public class Amigo {
         return conectado;
     }
 
-    public String getIp() {
-        return ip;
-    }
-
-    public String getPuerto() {
-        return puerto;
-    }
-    
-    public void setIp(String ip) {
-        this.puerto = ip;
-    }
-
     public void setConectado(boolean conectado) {
         this.conectado = conectado;
     }
+
+    public IComunicacionCliente getInterfaz() {
+        return interfaz;
+    }    
    
 }

@@ -20,6 +20,7 @@ import app.modelo.Amigo;
 import app.modelo.ListaAmigosOff;
 import app.modelo.ListaAmigosOn;
 import app.modelo.ListaConversaciones;
+import app.modelo.ListaSolicitudesPendientes;
 import app.modelo.UsuarioActual;
 import app.vista.VistaUtils;
 import java.io.IOException;
@@ -48,8 +49,6 @@ import javafx.stage.WindowEvent;
  */
 public class ControladorVistaGeneral {
     
-    private HiloCambiosIP hiloCambiosIp;
-    private HiloEscucha hiloEscucha;
     private ConcurrentHashMap<Amigo, Boolean> conversacionesAbiertas;
     
     @FXML private TableView<Amigo> listaAmigosOn;    
@@ -70,10 +69,7 @@ public class ControladorVistaGeneral {
         
         this.conversacionesAbiertas = new ConcurrentHashMap<>();
         
-        this.hiloCambiosIp = new HiloCambiosIP();
-        this.hiloCambiosIp.start();
-        this.hiloEscucha = new HiloEscucha();
-        this.hiloEscucha.start();
+        ListaSolicitudesPendientes.getInstancia().mainControllerProperty.set(this);
     }
     
     @FXML
@@ -154,10 +150,8 @@ public class ControladorVistaGeneral {
     private void cerrarSesion() {
         String[] args = { UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue() };
         HiloClienteServidor hiloLlamada = new HiloClienteServidor(2, args);
-        hiloLlamada.start();          
-        this.hiloCambiosIp.interrupt();
-        this.hiloEscucha.interrupt();
-        
+        hiloLlamada.start();
+
         Platform.exit();
     }
     
@@ -184,6 +178,24 @@ public class ControladorVistaGeneral {
             });
             dialogo.show();            
         }
+    }
+    
+    public void notificaNuevaSolicitud(Amigo amigo) throws IOException {
+        FXMLLoader loader = VistaUtils.cargarVista("app/vista/VentanaAviso.fxml");
+        Parent vista = loader.load();
+        ControladorVentanaAviso controlador = loader.getController();          
+        controlador.setMensaje(amigo.getNick().getValue() + 
+                "te ha enviado una solicitud de amistad.");
+
+        Stage dialogo = new Stage();
+        dialogo.initModality(Modality.WINDOW_MODAL);
+        dialogo.initOwner(this.campoBusqueda.getScene().getWindow());
+        dialogo.setScene(new Scene(vista));
+        dialogo.setTitle("Nueva solicitud");
+        dialogo.showAndWait();
+
+        Stage stage = (Stage) this.campoBusqueda.getScene().getWindow();
+        stage.close();           
     }
 
 }

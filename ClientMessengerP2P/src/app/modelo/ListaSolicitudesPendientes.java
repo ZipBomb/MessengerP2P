@@ -16,16 +16,12 @@
  */
 package app.modelo;
 
-import app.controlador.ControladorVentanaAviso;
-import app.vista.VistaUtils;
+import app.controlador.ControladorVistaGeneral;
 import java.io.IOException;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
 /**
  *
@@ -37,6 +33,7 @@ public class ListaSolicitudesPendientes {
     
     private final ObservableList<Amigo> listaSolicitudesPendientes;
     private static final ListaSolicitudesPendientes INSTANCIA = new ListaSolicitudesPendientes();
+    public ObjectProperty<ControladorVistaGeneral> mainControllerProperty = new SimpleObjectProperty();    
     
     private ListaSolicitudesPendientes() {
         this.listaSolicitudesPendientes = FXCollections.observableArrayList();
@@ -79,6 +76,10 @@ public class ListaSolicitudesPendientes {
 
     public boolean isEmpty() {
         return this.listaSolicitudesPendientes.isEmpty();
+    }
+    
+    public void notificaPeticion(Amigo amigo) throws IOException {
+        this.mainControllerProperty.getValue().notificaNuevaSolicitud(amigo);
     }
     
 }

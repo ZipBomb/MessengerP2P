@@ -20,14 +20,8 @@ import app.modelo.Amigo;
 import app.modelo.ListaAmigosOff;
 import app.modelo.ListaAmigosOn;
 import app.modelo.ListaSolicitudesPendientes;
-import app.vista.VistaUtils;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
 /**
  *
@@ -41,7 +35,7 @@ public class IServidorClienteImpl extends UnicastRemoteObject implements IServid
     public void notificarSolicitudesPendientes(Usuario[] solicitudesPendientes) {
         Amigo amigo;
         for(Usuario usuario : solicitudesPendientes) {
-            amigo = new Amigo(usuario.getNick(), usuario.isConectado(), usuario.getIp(), usuario.getPuerto());
+            amigo = new Amigo(usuario.getNick(), usuario.isConectado(), usuario.getInterfaz());
             try {
                 ListaSolicitudesPendientes.getInstancia().anhadirAmigo(amigo);
             } catch(Exception ex) {
@@ -52,7 +46,7 @@ public class IServidorClienteImpl extends UnicastRemoteObject implements IServid
 
     @Override
     public void notificarConexion(Usuario usuario) {
-        Amigo amigo = new Amigo(usuario.getNick(), usuario.isConectado(), usuario.getIp(), usuario.getPuerto());
+        Amigo amigo = new Amigo(usuario.getNick(), usuario.isConectado(), usuario.getInterfaz());
         try {
             ListaAmigosOff.getInstancia().eliminarAmigo(amigo);
             ListaAmigosOn.getInstancia().anhadirAmigo(amigo);
@@ -63,7 +57,7 @@ public class IServidorClienteImpl extends UnicastRemoteObject implements IServid
 
     @Override
     public void notificarDesconexion(Usuario usuario) {
-        Amigo amigo = new Amigo(usuario.getNick(), usuario.isConectado(), usuario.getIp(), usuario.getPuerto());
+        Amigo amigo = new Amigo(usuario.getNick(), usuario.isConectado(), usuario.getInterfaz());
         try {
             ListaAmigosOn.getInstancia().eliminarAmigo(amigo);
             ListaAmigosOff.getInstancia().anhadirAmigo(amigo);
@@ -74,7 +68,7 @@ public class IServidorClienteImpl extends UnicastRemoteObject implements IServid
 
     @Override
     public void notificarNuevaAmistad(Usuario usuario) {
-        Amigo amigo = new Amigo(usuario.getNick(), usuario.isConectado(), usuario.getIp(), usuario.getPuerto());
+        Amigo amigo = new Amigo(usuario.getNick(), usuario.isConectado(), usuario.getInterfaz());
         try {
             if(amigo.estaConectado()) {
                 ListaAmigosOn.getInstancia().anhadirAmigo(amigo);
@@ -89,26 +83,18 @@ public class IServidorClienteImpl extends UnicastRemoteObject implements IServid
 
     @Override
     public void notificarNuevaSolicitud(Usuario usuario) {
-        Amigo amigo = new Amigo(usuario.getNick(), usuario.isConectado(), usuario.getIp(), usuario.getPuerto());
+        Amigo amigo = new Amigo(usuario.getNick(), usuario.isConectado(), usuario.getInterfaz());
         try {
             ListaSolicitudesPendientes.getInstancia().anhadirAmigo(amigo);
+            ListaSolicitudesPendientes.getInstancia().notificaPeticion(amigo);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
     }
 
     @Override
-    public void actualizaIp(Usuario usuario) {
-        try {
-            ListaAmigosOn.getInstancia().modificaIp(usuario.getNick(), usuario.getIp());
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }        
-    }
-
-    @Override
     public void notificarEliminacion(Usuario usuario) throws RemoteException {
-        Amigo amigo = new Amigo(usuario.getNick(), usuario.isConectado(), usuario.getIp(), usuario.getPuerto());
+        Amigo amigo = new Amigo(usuario.getNick(), usuario.isConectado(), usuario.getInterfaz());
         if(ListaAmigosOn.getInstancia().yaExiste(amigo)) {
             try {
                 ListaAmigosOn.getInstancia().eliminarAmigo(amigo);

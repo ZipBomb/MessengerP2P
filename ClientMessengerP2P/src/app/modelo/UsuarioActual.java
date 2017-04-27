@@ -16,10 +16,6 @@
  */
 package app.modelo;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Enumeration;
 import java.util.regex.Pattern;
 
 /**
@@ -44,31 +40,8 @@ public class UsuarioActual {
         return usuarioActual;
     }
 
-    public void setUsuarioActual(String nick) throws SocketException, Exception {
-        String ipLocal = this.getLocalIp();
-        if(ipLocal != null) {
-            this.usuarioActual = new Amigo(nick, true, ipLocal, "7777");  
-        }
-        else throw new Exception("No se pudo recuperar la IP");
+    public void setUsuarioActual(String nick) {
+        this.usuarioActual = new Amigo(nick, true, null);
     }
-    
-    public void actualizaIp() throws SocketException {
-        this.usuarioActual.setIp(this.getLocalIp());
-    }
-    
-    private String getLocalIp() throws SocketException {
-        Enumeration e = NetworkInterface.getNetworkInterfaces();
-        while(e.hasMoreElements()) {
-            NetworkInterface n = (NetworkInterface) e.nextElement();
-            Enumeration ee = n.getInetAddresses();
-            while(ee.hasMoreElements()) {
-                InetAddress i = (InetAddress) ee.nextElement();
-                if(regexp.matcher(i.getHostAddress()).matches()) {
-                    return i.getHostAddress();
-                }
-            }
-        }
-        return null;
-    }    
     
 }
