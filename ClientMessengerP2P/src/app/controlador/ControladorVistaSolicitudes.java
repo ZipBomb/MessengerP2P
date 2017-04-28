@@ -27,6 +27,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -44,6 +45,8 @@ public class ControladorVistaSolicitudes {
 
     @FXML private TableView<Amigo> listaSolicitudesPendientes;
     @FXML private TableColumn<Amigo, String> columnaSolicitudes;
+    @FXML private Button botonAceptar;
+    @FXML private Button botonRechazar;
     
     @FXML
     private void initialize() {
@@ -51,6 +54,14 @@ public class ControladorVistaSolicitudes {
         this.columnaSolicitudes.setCellValueFactory(solicitud -> solicitud.getValue().getNick());
         this.listaSolicitudesPendientes.setPlaceholder(new Label("No tienes ninguna solicitud pendiente"));    
         this.listaSolicitudesPendientes.getSelectionModel().selectFirst();    
+        if(ListaSolicitudesPendientes.getInstancia().isEmpty()) {
+            this.botonAceptar.setDisable(true);
+            this.botonRechazar.setDisable(true);
+        }
+        else {
+            this.botonAceptar.setDisable(false);
+            this.botonRechazar.setDisable(false);        
+        }
     }
     
     @FXML
@@ -62,6 +73,9 @@ public class ControladorVistaSolicitudes {
     @FXML
     private void aceptar() throws IOException {
         Amigo usuarioSeleccionado = this.listaSolicitudesPendientes.getSelectionModel().getSelectedItem();
+        if(usuarioSeleccionado == null) {
+            return;
+        }
         FXMLLoader loader = VistaUtils.cargarVista("app/vista/VentanaAviso.fxml");
         Parent vista = loader.load();
         ControladorVentanaAviso controlador = loader.getController();           
@@ -93,12 +107,20 @@ public class ControladorVistaSolicitudes {
         dialogo.initOwner(this.listaSolicitudesPendientes.getScene().getWindow());
         dialogo.setScene(new Scene(vista));
         dialogo.setTitle("Éxito");
-        dialogo.showAndWait();        
+        dialogo.showAndWait();       
+        
+        if(ListaSolicitudesPendientes.getInstancia().isEmpty()) {
+            this.botonAceptar.setDisable(true);
+            this.botonRechazar.setDisable(true);        
+        }
     }
 
     @FXML
     private void rechazar() throws IOException {
         Amigo usuarioSeleccionado = this.listaSolicitudesPendientes.getSelectionModel().getSelectedItem();
+        if(usuarioSeleccionado == null) {
+            return;
+        }        
         FXMLLoader loader = VistaUtils.cargarVista("app/vista/VentanaAviso.fxml");
         Parent vista = loader.load();
         ControladorVentanaAviso controlador = loader.getController();           
@@ -121,7 +143,12 @@ public class ControladorVistaSolicitudes {
         dialogo.initOwner(this.listaSolicitudesPendientes.getScene().getWindow());
         dialogo.setScene(new Scene(vista));
         dialogo.setTitle("Éxito");
-        dialogo.showAndWait();        
+        dialogo.showAndWait();   
+        
+        if(ListaSolicitudesPendientes.getInstancia().isEmpty()) {
+            this.botonAceptar.setDisable(true);
+            this.botonRechazar.setDisable(true);        
+        }        
     }    
     
 }

@@ -16,7 +16,12 @@
  */
 package app.modelo;
 
+import app.controlador.ControladorVistaGeneral;
+import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
+import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 /**
  *
@@ -26,6 +31,7 @@ public class ListaConversaciones {
     
     private final ConcurrentHashMap<Amigo, Conversacion> listaConversaciones;
     private static final ListaConversaciones INSTANCIA = new ListaConversaciones();
+    public ObjectProperty<ControladorVistaGeneral> mainControllerProperty = new SimpleObjectProperty();    
 
     private ListaConversaciones() {
         this.listaConversaciones = new ConcurrentHashMap<>();
@@ -53,6 +59,16 @@ public class ListaConversaciones {
     public boolean existeConversacion(Amigo destinatario) {
         return this.listaConversaciones.containsKey(destinatario);
     }
+    
+    public void reabreVentana(Amigo amigo) throws IOException {
+        Platform.runLater(() -> {
+            try {
+                this.mainControllerProperty.getValue().reabreVentanaConversacion(amigo);
+            } catch (IOException ex) {
+                System.out.println(ex.getMessage());
+            }
+        });        
+    }    
     
 }
 

@@ -35,9 +35,16 @@ public class Mensaje {
         this.emisor = emisor;
         this.fecha = new Date();
         String contenidoFecha = new SimpleDateFormat("[HH:mm:ss] ").format(this.fecha);   
-        this.contenido = new SimpleStringProperty(contenidoFecha 
-                + "@" + this.emisor.getNick().getValue()
-                + " dijo: " + mensaje);
+        Amigo usuarioActual = UsuarioActual.getInstancia().getUsuarioActual();
+        if(emisor.getNick().getValue().equals(usuarioActual.getNick().getValue())) {
+            this.contenido = new SimpleStringProperty(contenidoFecha 
+                    + "Tú "
+                    + "dices: " + mensaje);
+        } else {
+            this.contenido = new SimpleStringProperty(contenidoFecha 
+                    + "@" + this.emisor.getNick().getValue()
+                    + " dijo: " + mensaje);        
+        }
     }
     
     public Amigo getEmisor() {

@@ -20,12 +20,13 @@ import app.modelo.Amigo;
 import app.modelo.ListaAmigosOff;
 import app.modelo.ListaAmigosOn;
 import app.modelo.ListaConversaciones;
+import app.modelo.ListaResultadoBusqueda;
 import app.modelo.ListaSolicitudesPendientes;
 import app.modelo.UsuarioActual;
 import app.vista.VistaUtils;
 import java.io.IOException;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -49,7 +50,7 @@ import javafx.stage.WindowEvent;
  */
 public class ControladorVistaGeneral {
     
-    private ConcurrentHashMap<Amigo, Boolean> conversacionesAbiertas;
+    private HashMap<String, ControladorVistaConversacion> conversacionesAbiertas;
     
     @FXML private TableView<Amigo> listaAmigosOn;    
     @FXML private TableColumn<Amigo, String> columnaOn;
@@ -67,32 +68,37 @@ public class ControladorVistaGeneral {
         this.listaAmigosOff.setPlaceholder(new Label("No tienes ningún amigo desconectado."));  
         this.listaAmigosOn.getSelectionModel().selectFirst();
         
-        this.conversacionesAbiertas = new ConcurrentHashMap<>();
+        this.conversacionesAbiertas = new HashMap<>();
         
         ListaSolicitudesPendientes.getInstancia().mainControllerProperty.set(this);
+        ListaAmigosOff.getInstancia().mainControllerProperty.set(this);
+        ListaConversaciones.getInstancia().mainControllerProperty.set(this);
     }
     
     @FXML
     private void iniciarConversacion(MouseEvent event) throws IOException {
-        if(event.getClickCount() == 2 && !this.conversacionesAbiertas.containsKey(this.listaAmigosOn.getSelectionModel().getSelectedItem())) {
-            FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaConversacion.fxml");
-            Parent vista = loader.load();
-            ControladorVistaConversacion controlador = loader.getController();
+        if(event.getClickCount() == 2) {
+            Amigo amigoSeleccionado = this.listaAmigosOn.getSelectionModel().getSelectedItem();
+            String nickAmigo = amigoSeleccionado.getNick().getValue();
+            if(!this.conversacionesAbiertas.containsKey(nickAmigo) || this.conversacionesAbiertas.get(nickAmigo) == null) {
+                FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaConversacion.fxml");
+                Parent vista = loader.load();
+                ControladorVistaConversacion controlador = loader.getController();
 
-            Amigo destinatario = this.listaAmigosOn.getSelectionModel().getSelectedItem();
-            if(!ListaConversaciones.getInstancia().existeConversacion(destinatario)) {
-                ListaConversaciones.getInstancia().iniciarConversacion(destinatario);
+                if(!ListaConversaciones.getInstancia().existeConversacion(amigoSeleccionado)) {
+                    ListaConversaciones.getInstancia().iniciarConversacion(amigoSeleccionado);
+                }
+                controlador.initData(ListaConversaciones.getInstancia().getConversacion(amigoSeleccionado));            
+                this.conversacionesAbiertas.put(nickAmigo, controlador);
+
+                Stage dialogo = new Stage();
+                dialogo.setScene(new Scene(vista));
+                dialogo.setOnCloseRequest((WindowEvent event1) -> {
+                    this.conversacionesAbiertas.put(nickAmigo, null);
+                });            
+                dialogo.setTitle("Conversación con " + amigoSeleccionado.getNick().getValue());
+                dialogo.show();
             }
-            controlador.initData(ListaConversaciones.getInstancia().getConversacion(destinatario));            
-            this.conversacionesAbiertas.put(destinatario, Boolean.TRUE);
-            
-            Stage dialogo = new Stage();
-            dialogo.setScene(new Scene(vista));
-            dialogo.setOnCloseRequest((WindowEvent event1) -> {
-                this.conversacionesAbiertas.put(destinatario, Boolean.FALSE);
-            });            
-            dialogo.setTitle("Conversación con " + destinatario.getNick().getValue());
-            dialogo.show();
         }
     }
 
@@ -113,6 +119,9 @@ public class ControladorVistaGeneral {
         dialogo.initOwner(this.listaAmigosOn.getScene().getWindow());
         dialogo.setScene(new Scene(vista));
         dialogo.setTitle("Usuarios encontrados");
+        dialogo.setOnCloseRequest((WindowEvent event) -> {
+            ListaResultadoBusqueda.getInstancia().limpiarLista();
+        });           
         dialogo.showAndWait();
     }
     
@@ -127,7 +136,7 @@ public class ControladorVistaGeneral {
         dialogo.initModality(Modality.WINDOW_MODAL);
         dialogo.initOwner(this.listaAmigosOn.getScene().getWindow());
         dialogo.setScene(new Scene(vista));
-        dialogo.setTitle("Solicitudes pendientes");
+        dialogo.setTitle("Solicitudes pendientes");     
         dialogo.showAndWait();   
     }
 
@@ -153,28 +162,28 @@ public class ControladorVistaGeneral {
         hiloLlamada.start();
 
         Platform.exit();
+        System.exit(0);
     }
     
     public void reabreVentanaConversacion(Amigo amigo) throws IOException {
-        System.out.println("Contiene: " + this.conversacionesAbiertas.containsKey(amigo));
-        System.out.println("Estado conversación: " + this.conversacionesAbiertas.get(amigo));
-        if(!this.conversacionesAbiertas.containsKey(amigo) 
-            || Objects.equals(this.conversacionesAbiertas.get(amigo), Boolean.FALSE)) {
+        String nickAmigo = amigo.getNick().getValue();
+        if(!this.conversacionesAbiertas.containsKey(nickAmigo) 
+            || this.conversacionesAbiertas.get(nickAmigo) == null) {
             FXMLLoader loader = VistaUtils.cargarVista("app/vista/VistaConversacion.fxml");
             Parent vista = loader.load();
-
-            System.out.println("Amigo: " + this.conversacionesAbiertas.get(amigo));
+            ControladorVistaConversacion controlador = loader.getController();
+            
             if(!ListaConversaciones.getInstancia().existeConversacion(amigo)) {
                 ListaConversaciones.getInstancia().iniciarConversacion(amigo);
             }
-            // controlador.initData(ListaConversaciones.getInstancia().getConversacion(amigo));            
-            this.conversacionesAbiertas.put(amigo, Boolean.TRUE);
-            System.out.println("YEAH");
+            controlador.initData(ListaConversaciones.getInstancia().getConversacion(amigo));            
+            this.conversacionesAbiertas.put(nickAmigo, controlador);
+
             Stage dialogo = new Stage();
             dialogo.setScene(new Scene(vista));
             dialogo.setTitle("Conversación con " + amigo.getNick().getValue());
-            dialogo.setOnCloseRequest((WindowEvent event1) -> {
-                this.conversacionesAbiertas.put(amigo, Boolean.FALSE);
+            dialogo.setOnCloseRequest((WindowEvent event) -> {
+                this.conversacionesAbiertas.put(nickAmigo, null);
             });
             dialogo.show();            
         }
@@ -192,10 +201,14 @@ public class ControladorVistaGeneral {
         dialogo.initOwner(this.campoBusqueda.getScene().getWindow());
         dialogo.setScene(new Scene(vista));
         dialogo.setTitle("Nueva solicitud");
-        dialogo.showAndWait();
-
-        Stage stage = (Stage) this.campoBusqueda.getScene().getWindow();
-        stage.close();           
+        dialogo.showAndWait();        
+    }
+    
+    public void bloqueaVentanaDesconexion(Amigo amigo) {
+        String nickAmigo = amigo.getNick().getValue();
+        if(this.conversacionesAbiertas.containsKey(nickAmigo)) {
+            this.conversacionesAbiertas.get(nickAmigo).bloqueaConversacion();
+        }
     }
 
 }

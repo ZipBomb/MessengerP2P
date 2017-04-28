@@ -18,6 +18,7 @@ package app.controlador;
 
 import app.modelo.Amigo;
 import app.modelo.ListaResultadoBusqueda;
+import app.modelo.UsuarioActual;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -35,7 +36,8 @@ public class HiloClienteServidor extends Thread {
     
     public HiloClienteServidor(int tipoOp, String[] args) {
         try {
-            String urlRegistro = "rmi://192.168.43.214:1099/Messenger";
+            //String urlRegistro = "rmi://192.168.43.214:1099/Messenger";            
+            String urlRegistro = "rmi://localhost:1099/Messenger";
             this.interfazServidor = (IClienteServidor) Naming.lookup(urlRegistro);
         } catch (MalformedURLException | NotBoundException | RemoteException ex) {
             System.out.println(ex.getMessage());
@@ -63,12 +65,6 @@ public class HiloClienteServidor extends Thread {
                 case 2: { // desconectarse(nick)
                     if(args.length == 1) {
                         this.desconectarse(args[0]);
-                    } 
-                    break;
-                }            
-                case 3: { // notificarNuevaIp(nick, nuevaIP)
-                    if(args.length == 2) {
-                        this.notificarNuevaIp(args[0], args[1]);
                     } 
                     break;
                 }
@@ -106,12 +102,9 @@ public class HiloClienteServidor extends Thread {
         this.interfazServidor.desconectarse(nick);
     }
     
-    public void notificarNuevaIp(String nick, String nuevaIp) throws RemoteException {
-        this.interfazServidor.cambiarIP(nick, nuevaIp);
-    }
-    
     public void buscarUsuarios(String cadenaBusqueda) throws RemoteException {
-        Usuario[] resultados = this.interfazServidor.buscarUsuarios(cadenaBusqueda);
+        String nick = UsuarioActual.getInstancia().getUsuarioActual().getNick().getValue();
+        Usuario[] resultados = this.interfazServidor.buscarUsuarios(nick, cadenaBusqueda);
         for(Usuario aux : resultados) {
             try {
                 ListaResultadoBusqueda.getInstancia().anhadirAmigo(

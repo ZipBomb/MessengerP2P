@@ -18,8 +18,6 @@ package app.modelo;
 
 import app.controlador.ControladorVistaGeneral;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -82,14 +80,12 @@ public class ListaSolicitudesPendientes {
     }
     
     public void notificaPeticion(Amigo amigo) throws IOException {
-        Platform.runLater(new Runnable(){
-             @Override public void run() {            
-                 try {
-                     mainControllerProperty.getValue().notificaNuevaSolicitud(amigo);
-                 } catch (IOException ex) {
-                     System.out.println(ex.getMessage());
-                 }
-             }
+        Platform.runLater(() -> {
+            try {
+                this.mainControllerProperty.getValue().notificaNuevaSolicitud(amigo);
+            } catch (IOException ex) {
+                System.out.println(ex.getMessage());
+            }
         });        
     }
     

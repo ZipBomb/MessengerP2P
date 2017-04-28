@@ -75,7 +75,8 @@ public class ControladorVistaLogin {
             this.regexp = Pattern.compile("^(192\\.168\\.).*");
             String ipLocal = this.getLocalIp();
             System.setProperty("java.rmi.server.hostname", ipLocal);
-            String urlRegistro = "rmi://192.168.43.214:1099/Messenger";
+            //String urlRegistro = "rmi://192.168.43.214:1099/Messenger";
+            String urlRegistro = "rmi://localhost:1099/Messenger";            
             this.interfazServidor = (IClienteServidor) Naming.lookup(urlRegistro);
         } catch (MalformedURLException | NotBoundException | RemoteException | SocketException ex) {
             System.out.println(ex.getMessage());
@@ -127,6 +128,7 @@ public class ControladorVistaLogin {
                 HiloClienteServidor hiloLlamada = new HiloClienteServidor(2, args);
                 hiloLlamada.start();
                 Platform.exit();
+                System.exit(0);
             });              
             stage.show();   
             // Imprimir aviso de solicitudes pendientes en caso de que se hayan notificado
@@ -162,7 +164,7 @@ public class ControladorVistaLogin {
     
     @FXML
     private void registrarse() {
-        hostServices.showDocument("192.168.43.96:80");
+        hostServices.showDocument("192.168.43.214:80");
     }
     
     private String getLocalIp() throws SocketException {

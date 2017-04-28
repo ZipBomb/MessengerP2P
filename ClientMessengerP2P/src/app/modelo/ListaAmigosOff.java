@@ -16,6 +16,11 @@
  */
 package app.modelo;
 
+import app.controlador.ControladorVistaGeneral;
+import java.io.IOException;
+import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -27,6 +32,7 @@ public class ListaAmigosOff {
     
     private final ObservableList<Amigo> listaAmigosOff;
     private static final ListaAmigosOff INSTANCIA = new ListaAmigosOff();
+    public ObjectProperty<ControladorVistaGeneral> mainControllerProperty = new SimpleObjectProperty();    
     
     private ListaAmigosOff() {
         this.listaAmigosOff = FXCollections.observableArrayList();
@@ -78,5 +84,11 @@ public class ListaAmigosOff {
         }
         return null;
     }
+    
+    public void bloqueaVentanaDesconexion(Amigo amigo) throws IOException {
+        Platform.runLater(() -> {
+            this.mainControllerProperty.getValue().bloqueaVentanaDesconexion(amigo);
+        });        
+    }    
     
 }

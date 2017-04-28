@@ -28,6 +28,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -45,24 +46,37 @@ public class ControladorVistaResultadosBusqueda {
     
     @FXML private TableView<Amigo> listaResultados;
     @FXML private TableColumn<Amigo, String> columnaResultados;
+    @FXML private Button botonEnviar;
     
     @FXML
-    private void initialize() {
+    private void initialize() throws InterruptedException {
         this.listaResultados.setItems(ListaResultadoBusqueda.getInstancia().getListaResultadoBusqueda());
         this.columnaResultados.setCellValueFactory(usuario -> usuario.getValue().getNick());
         this.listaResultados.setPlaceholder(new Label("No hay resultados para tu búsqueda"));
         this.listaResultados.getSelectionModel().selectFirst();
+        // Esperamos a que se sincronicen los hilos y desactivamos el botón en caso de que la búsqueda 
+        // no produzca resultados
+        Thread.sleep(500);
+        if(ListaResultadoBusqueda.getInstancia().getListaResultadoBusqueda().isEmpty()) {
+            this.botonEnviar.setDisable(true);
+        } else {
+            this.botonEnviar.setDisable(false);
+        }
     }
     
     @FXML
     private void cerrar() {
+        ListaResultadoBusqueda.getInstancia().limpiarLista();
         Stage stage = (Stage) this.listaResultados.getScene().getWindow();
         stage.close();       
     }
     
     @FXML
     private void enviarSolicitud() throws IOException, Exception {
-        Amigo usuarioSeleccionado = listaResultados.getSelectionModel().getSelectedItem();        
+        Amigo usuarioSeleccionado = listaResultados.getSelectionModel().getSelectedItem();
+        if(usuarioSeleccionado == null) {
+            return;
+        }
         FXMLLoader loader = VistaUtils.cargarVista("app/vista/VentanaAviso.fxml");
         Parent vista = loader.load();
         ControladorVentanaAviso controlador = loader.getController();   

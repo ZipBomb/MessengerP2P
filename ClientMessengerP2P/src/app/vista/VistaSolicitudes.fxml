@@ -38,12 +38,12 @@
             </Button>
             <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1">
                <children>
-                  <Button mnemonicParsing="false" onAction="#aceptar" text="Aceptar">
+                  <Button fx:id="botonAceptar" mnemonicParsing="false" onAction="#aceptar" text="Aceptar">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#rechazar" text="Rechazar">
+                  <Button fx:id="botonRechazar" mnemonicParsing="false" onAction="#rechazar" text="Rechazar">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
