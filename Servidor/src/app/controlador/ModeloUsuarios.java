@@ -173,7 +173,7 @@ public class ModeloUsuarios {
             return null;        
     }
     
-    public Usuario[] buscarUsuarios(String cadenaBusqueda) {
+    public Usuario[] buscarUsuarios(String nick, String cadenaBusqueda) {
         Connection connection = null;
         try {
             connection = conectar();
@@ -191,8 +191,10 @@ public class ModeloUsuarios {
             resultado = consulta.executeQuery();
             
             while(resultado.next()){
-                Usuario usuario = new Usuario(resultado.getString("nick"), resultado.getBoolean("conectado"), null);
-                users.add(usuario);
+                if(!resultado.getString("nick").equals(nick)){
+                    Usuario usuario = new Usuario(resultado.getString("nick"), resultado.getBoolean("conectado"), null);
+                    users.add(usuario);
+                }
             }
                                                          
             connection.commit();
@@ -398,6 +400,23 @@ public class ModeloUsuarios {
             return null;
     }
     
+    private boolean estaPeticion(Connection conn, String peticionario, String receptor) throws SQLException{
+        PreparedStatement consulta = null;
+        ResultSet resultado = null;
+        
+        consulta = conn.prepareStatement("select count(*) from peticionesPendientes where (peticionario = ? and receptor = ?) or (peticionario = ? and receptor = ?)");
+        consulta.setString(1,peticionario);
+        consulta.setString(2, receptor);
+        consulta.setString(3, receptor);
+        consulta.setString(4, peticionario);
+        resultado = consulta.executeQuery();
+        resultado.next();
+        if(resultado.getInt(1) == 0)
+            return true;
+        else
+            return false;
+    }
+    
     public void guardarPeticionAmistad(String peticionario, String receptor) {
         Connection connection = null;
         try {
@@ -409,10 +428,12 @@ public class ModeloUsuarios {
         try {
             connection.setAutoCommit(false);
             
-            consulta = connection.prepareStatement("insert into peticionesPendientes(peticionario,receptor) values(?,?)");
-            consulta.setString(1, peticionario);
-            consulta.setString(2, receptor);
-            consulta.executeUpdate();
+            if(estaPeticion(connection,peticionario,receptor)){
+                consulta = connection.prepareStatement("insert into peticionesPendientes(peticionario,receptor) values(?,?)");
+                consulta.setString(1, peticionario);
+                consulta.setString(2, receptor);
+                consulta.executeUpdate();
+            }
                                                  
             connection.commit();
         }catch (SQLException e){

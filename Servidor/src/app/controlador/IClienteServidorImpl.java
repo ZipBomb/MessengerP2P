@@ -37,6 +37,7 @@ public class IClienteServidorImpl extends UnicastRemoteObject implements IClient
             for(int i = 0; i < amigos.length; i++){
                 if(amigos[i].isConectado()){
                     IServidorCliente aux = clientes.get(amigos[i].getNick());
+                    amigos[i].setInterfaz(this.comunicacion.get(amigos[i].getNick()));
                     aux.notificarConexion(usuario);
                 }
             }
@@ -47,8 +48,8 @@ public class IClienteServidorImpl extends UnicastRemoteObject implements IClient
     }
 
     @Override
-    public synchronized Usuario[] buscarUsuarios(String cadenaBusqueda) throws RemoteException {
-        return modeloUsuarios.buscarUsuarios(cadenaBusqueda);
+    public synchronized Usuario[] buscarUsuarios(String nick, String cadenaBusqueda) throws RemoteException {
+        return modeloUsuarios.buscarUsuarios(nick, cadenaBusqueda);
     }        
 
     @Override
