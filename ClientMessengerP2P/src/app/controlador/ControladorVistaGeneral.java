@@ -67,6 +67,7 @@ public class ControladorVistaGeneral {
         this.listaAmigosOn.setPlaceholder(new Label("No tienes ningún amigo conectado."));
         this.listaAmigosOff.setPlaceholder(new Label("No tienes ningún amigo desconectado."));  
         this.listaAmigosOn.getSelectionModel().selectFirst();
+        this.listaAmigosOff.setSelectionModel(null);        
         
         this.conversacionesAbiertas = new HashMap<>();
         
@@ -194,7 +195,7 @@ public class ControladorVistaGeneral {
         Parent vista = loader.load();
         ControladorVentanaAviso controlador = loader.getController();          
         controlador.setMensaje("@" + amigo.getNick().getValue() + 
-                " te ha enviado una solicitud de amistad.");
+                " te ha enviado una solicitud de amistad \n\t(Opciones -> Solicitudes pendientes)");
 
         Stage dialogo = new Stage();
         dialogo.initModality(Modality.WINDOW_MODAL);
@@ -206,7 +207,7 @@ public class ControladorVistaGeneral {
     
     public void bloqueaVentanaDesconexion(Amigo amigo) {
         String nickAmigo = amigo.getNick().getValue();
-        if(this.conversacionesAbiertas.containsKey(nickAmigo)) {
+        if(this.conversacionesAbiertas.containsKey(nickAmigo) && this.conversacionesAbiertas.get(nickAmigo) != null) {
             this.conversacionesAbiertas.get(nickAmigo).bloqueaConversacion();
         }
     }

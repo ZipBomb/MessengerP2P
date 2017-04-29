@@ -50,6 +50,7 @@ public class ControladorVistaConversacion {
     public void initialize() {
         this.listaMensajes.setPlaceholder(new Label("Todavía no habéis enviado ningún mensaje"));    
         this.columnaMensajes.setText("Tu amigo está conectado");
+        this.listaMensajes.setSelectionModel(null);
         this.listaMensajes.setStyle("-fx-border-color: green");      
     }
 

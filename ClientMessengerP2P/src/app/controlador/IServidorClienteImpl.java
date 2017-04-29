@@ -98,6 +98,7 @@ public class IServidorClienteImpl extends UnicastRemoteObject implements IServid
         Amigo amigo = new Amigo(usuario.getNick(), usuario.isConectado(), usuario.getInterfaz());
         if(ListaAmigosOn.getInstancia().yaExiste(amigo)) {
             try {
+                ListaAmigosOff.getInstancia().bloqueaVentanaDesconexion(amigo);
                 ListaAmigosOn.getInstancia().eliminarAmigo(amigo);
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
