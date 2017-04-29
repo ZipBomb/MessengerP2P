@@ -26,7 +26,7 @@ import javafx.collections.ObservableList;
 public class Conversacion {
     
     private final ObservableList<Mensaje> conversacion;
-    private final Amigo destinatario;
+    private Amigo destinatario;
     
     public Conversacion(Amigo destinatario) {
         this.destinatario = destinatario;
@@ -43,6 +43,10 @@ public class Conversacion {
     
     public Amigo getDestinatario() {
         return this.destinatario;
+    }
+
+    public void setDestinatario(Amigo destinatario) {
+        this.destinatario = destinatario;
     }
     
 }

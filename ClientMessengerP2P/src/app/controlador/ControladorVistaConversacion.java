@@ -18,6 +18,7 @@ package app.controlador;
 
 import app.modelo.Amigo;
 import app.modelo.Conversacion;
+import app.modelo.ListaAmigosOn;
 import app.modelo.Mensaje;
 import app.modelo.UsuarioActual;
 import java.io.BufferedInputStream;
@@ -119,4 +120,13 @@ public class ControladorVistaConversacion {
         this.listaMensajes.setStyle("-fx-border-color: red");
         this.columnaMensajes.setText("Tu amigo se ha desconectado");
     }
+    
+    public void desbloqueaConversacion() {
+        Amigo nuevaReferencia = ListaAmigosOn.getInstancia().recuperaAmigo(this.conversacionActual.getDestinatario().getNick().getValue());
+        this.conversacionActual.setDestinatario(nuevaReferencia);
+        this.botonEnviar.setDisable(false);
+        this.cajaTexto.setDisable(false);
+        this.listaMensajes.setStyle("-fx-border-color: green");
+        this.columnaMensajes.setText("Tu amigo está conectado");
+    }    
 }

@@ -25,7 +25,6 @@ import app.modelo.ListaSolicitudesPendientes;
 import app.modelo.UsuarioActual;
 import app.vista.VistaUtils;
 import java.io.IOException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -211,5 +210,12 @@ public class ControladorVistaGeneral {
             this.conversacionesAbiertas.get(nickAmigo).bloqueaConversacion();
         }
     }
+    
+    public void desbloqueaVentanaConexion(Amigo amigo) {
+        String nickAmigo = amigo.getNick().getValue();
+        if(this.conversacionesAbiertas.containsKey(nickAmigo) && this.conversacionesAbiertas.get(nickAmigo) != null) {
+            this.conversacionesAbiertas.get(nickAmigo).desbloqueaConversacion();
+        }
+    }    
 
 }

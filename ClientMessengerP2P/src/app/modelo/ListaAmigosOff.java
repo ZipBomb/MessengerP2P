@@ -89,6 +89,12 @@ public class ListaAmigosOff {
         Platform.runLater(() -> {
             this.mainControllerProperty.getValue().bloqueaVentanaDesconexion(amigo);
         });        
-    }    
+    }  
+    
+    public void desbloqueaVentanaConexion(Amigo amigo) throws IOException {
+        Platform.runLater(() -> {
+            this.mainControllerProperty.getValue().desbloqueaVentanaConexion(amigo);
+        });        
+    }        
     
 }

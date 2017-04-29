@@ -29,7 +29,7 @@ import javafx.beans.property.SimpleObjectProperty;
  */
 public class ListaConversaciones {
     
-    private final ConcurrentHashMap<Amigo, Conversacion> listaConversaciones;
+    private final ConcurrentHashMap<String, Conversacion> listaConversaciones;
     private static final ListaConversaciones INSTANCIA = new ListaConversaciones();
     public ObjectProperty<ControladorVistaGeneral> mainControllerProperty = new SimpleObjectProperty();    
 
@@ -42,22 +42,25 @@ public class ListaConversaciones {
     }    
     
     public void iniciarConversacion(Amigo destinatario) {
+        String nickAmigo = destinatario.getNick().getValue();
         if(ListaAmigosOn.getInstancia().yaExiste(destinatario) 
-                && !this.listaConversaciones.containsKey(destinatario)) {
-            this.listaConversaciones.put(destinatario, new Conversacion(destinatario));
+                && !this.listaConversaciones.containsKey(nickAmigo)) {
+            this.listaConversaciones.put(nickAmigo, new Conversacion(destinatario));
         }
     }
     
     public Conversacion getConversacion(Amigo destinatario) {
+        String nickAmigo = destinatario.getNick().getValue();        
         if(ListaAmigosOn.getInstancia().yaExiste(destinatario) 
-                && this.listaConversaciones.containsKey(destinatario)) {
-            return this.listaConversaciones.get(destinatario);
+                && this.listaConversaciones.containsKey(nickAmigo)) {
+            return this.listaConversaciones.get(nickAmigo);
         }
         return null;
     }
     
     public boolean existeConversacion(Amigo destinatario) {
-        return this.listaConversaciones.containsKey(destinatario);
+        String nickAmigo = destinatario.getNick().getValue();        
+        return this.listaConversaciones.containsKey(nickAmigo);
     }
     
     public void reabreVentana(Amigo amigo) throws IOException {

@@ -50,6 +50,7 @@ public class IServidorClienteImpl extends UnicastRemoteObject implements IServid
         try {
             ListaAmigosOff.getInstancia().eliminarAmigo(amigo);
             ListaAmigosOn.getInstancia().anhadirAmigo(amigo);
+            ListaAmigosOff.getInstancia().desbloqueaVentanaConexion(amigo);
         } catch(Exception ex) {
             System.out.println("ERROR: " + ex.getMessage());
         }
