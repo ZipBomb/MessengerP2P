@@ -1,7 +1,5 @@
 CREATE SCHEMA `MessengerP2P`;
 use MessengerP2P;
-CREATE USER 'usuarioP2P'@'localhost' IDENTIFIED BY 'aplicacionP2P';
-GRANT ALL PRIVILEGES ON MessengerP2P . * TO 'usuarioP2P'@'localhost';
 CREATE TABLE usuarios(nick varchar(16) NOT NULL, password varchar(16) NOT NULL, conectado BOOLEAN NOT NULL, PRIMARY KEY(nick));
 CREATE TABLE amigos(usuario1 varchar(16) NOT NULL, usuario2 varchar(16) NOT NULL, PRIMARY KEY(usuario1, usuario2), FOREIGN KEY(usuario1) REFERENCES usuarios(nick), FOREIGN KEY(usuario2) REFERENCES usuarios(nick));
 CREATE TABLE peticionesPendientes(peticionario varchar(16) NOT NULL, receptor varchar(16) NOT NULL, PRIMARY KEY(peticionario, receptor), FOREIGN KEY(peticionario) REFERENCES usuarios(nick), FOREIGN KEY(receptor) REFERENCES usuarios(nick));
